@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FAQ · Argentum Investimentos</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black: #0a0a0a;
+      --white: #ffffff;
+      --gray-100: #f5f5f5;
+      --gray-200: #e8e8e8;
+      --gray-400: #999;
+      --gray-600: #555;
+      --accent: #b8a060;
+      --radius: 8px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--gray-100);
+      color: var(--black);
+      min-height: 100vh;
+    }
+
+    /* HEADER */
+    header {
+      background: var(--black);
+      padding: 0 24px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    .header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      height: 60px;
+    }
+    header img {
+      height: 28px;
+      object-fit: contain;
+    }
+    .header-divider {
+      width: 1px;
+      height: 24px;
+      background: rgba(255,255,255,0.2);
+    }
+    .header-title {
+      color: var(--white);
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      opacity: 0.85;
+    }
+    .header-badge {
+      margin-left: auto;
+      background: rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.7);
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      letter-spacing: 0.3px;
+    }
+
+    /* HERO */
+    .hero {
+      background: var(--black);
+      padding: 40px 24px 48px;
+      text-align: center;
+    }
+    .hero h1 {
+      color: var(--white);
+      font-size: clamp(22px, 4vw, 32px);
+      font-weight: 600;
+      letter-spacing: -0.5px;
+      margin-bottom: 10px;
+    }
+    .hero p {
+      color: rgba(255,255,255,0.5);
+      font-size: 14px;
+      margin-bottom: 28px;
+    }
+
+    /* SEARCH */
+    .search-wrap {
+      max-width: 560px;
+      margin: 0 auto;
+      position: relative;
+    }
+    .search-wrap svg {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gray-400);
+    }
+    #search {
+      width: 100%;
+      padding: 14px 16px 14px 46px;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      background: var(--white);
+      color: var(--black);
+      outline: none;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+    }
+    #search::placeholder { color: var(--gray-400); }
+    #search:focus { box-shadow: 0 4px 20px rgba(0,0,0,0.3), 0 0 0 2px var(--accent); }
+
+    /* MAIN */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 28px 20px 60px;
+    }
+
+    /* FILTERS */
+    .filters {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+      align-items: center;
+    }
+    .filter-label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--gray-400);
+      margin-right: 4px;
+    }
+    .pill {
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1.5px solid var(--gray-200);
+      background: var(--white);
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.15s;
+      color: var(--gray-600);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    .pill:hover { border-color: var(--black); color: var(--black); }
+    .pill.active { background: var(--black); color: var(--white); border-color: var(--black); }
+
+    /* STATS */
+    .stats {
+      font-size: 13px;
+      color: var(--gray-400);
+      margin-bottom: 20px;
+    }
+    .stats strong { color: var(--black); }
+
+    /* GRID */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 12px;
+    }
+
+    /* CARD */
+    .card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--gray-200);
+      overflow: hidden;
+      transition: box-shadow 0.15s;
+    }
+    .card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+
+    .card-header {
+      padding: 16px 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      user-select: none;
+    }
+    .card-header:hover { background: var(--gray-100); }
+
+    .card-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      background: var(--black);
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .card-meta {
+      flex: 1;
+      min-width: 0;
+    }
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.4;
+      color: var(--black);
+      margin-bottom: 5px;
+    }
+    .card-tags {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+    .tag {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+    .tag-cat {
+      background: var(--black);
+      color: var(--white);
+    }
+    .tag-aud {
+      background: var(--gray-200);
+      color: var(--gray-600);
+    }
+    .tag-fonte-hub {
+      background: #e8f4e8;
+      color: #2d7a2d;
+    }
+
+    .card-chevron {
+      color: var(--gray-400);
+      flex-shrink: 0;
+      transition: transform 0.2s;
+      margin-top: 2px;
+    }
+    .card.open .card-chevron { transform: rotate(180deg); }
+
+    .card-body {
+      display: none;
+      padding: 0 18px 18px;
+      border-top: 1px solid var(--gray-200);
+    }
+    .card.open .card-body { display: block; }
+    .card-content {
+      font-size: 13.5px;
+      line-height: 1.7;
+      color: var(--gray-600);
+      padding-top: 14px;
+      white-space: pre-wrap;
+    }
+    .card-content strong, .card-content b { color: var(--black); }
+
+    /* EMPTY */
+    .empty {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--gray-400);
+    }
+    .empty svg { margin-bottom: 12px; opacity: 0.4; }
+    .empty p { font-size: 15px; }
+
+    /* LOADING */
+    .loading {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--gray-400);
+    }
+    .spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid var(--gray-200);
+      border-top-color: var(--black);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 12px;
+      color: var(--gray-400);
+      border-top: 1px solid var(--gray-200);
+    }
+
+    @media (max-width: 600px) {
+      .grid { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 20px; }
+      .header-badge { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <img src="https://argentuminvestimentos.com/wp-content/uploads/2024/01/arg.png" alt="Argentum" />
+    <div class="header-divider"></div>
+    <span class="header-title">FAQ Argentum</span>
+    <span class="header-badge" id="total-badge">Carregando...</span>
+  </div>
+</header>
+
+<div class="hero">
+  <h1>FAQ Argentum</h1>
+  <p>Consulte processos, dúvidas frequentes e orientações operacionais</p>
+  <div class="search-wrap">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+    </svg>
+    <input type="search" id="search" placeholder="Buscar por palavra-chave..." autocomplete="off" />
+  </div>
+</div>
+
+<main>
+  <div class="filters" id="filters">
+    <span class="filter-label">Categoria</span>
+    <button class="pill active" data-cat="Todos">Todos</button>
+  </div>
+
+  <div class="stats" id="stats"></div>
+  <div class="grid" id="grid">
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>Carregando base de conhecimento...</p>
+    </div>
+  </div>
+</main>
+
+<footer>
+  Argentum Investimentos &nbsp;·&nbsp; FAQ Interno &nbsp;·&nbsp; Atualizado via Notion
+</footer>
+
+<script>
+  const CATEGORY_ICONS = {
+    'Cartão': '💳', 'Cadastro': '📋', 'IR': '📊', 'STVM': '🔄',
+    'Portabilidade': '↔️', 'Previdência': '🏦', 'Renda Variável': '📈',
+    'Crédito': '💰', 'Conta Digital': '📱', 'Seguros': '🛡️',
+    'XP Internacional': '🌎', 'XP Empresas': '🏢', 'FGTS': '🏗️',
+    'Bloqueios': '🔒', 'Cancelamento': '❌', 'Garantia': '🔐',
+    'HUB': '🔧', 'Fee Fixo': '💲', 'Fundos': '📦', 'Corretagem': '📉',
+    'Suitability': '✅', 'Informação': 'ℹ️', 'Outros': '📌',
+  };
+
+  let allItems = [];
+  let activeCategory = 'Todos';
+
+  async function loadFAQ() {
+    try {
+      const res = await fetch('/api/faq');
+      if (!res.ok) throw new Error(`Erro ${res.status}`);
+      allItems = await res.json();
+      buildFilters();
+      render();
+    } catch (e) {
+      document.getElementById('grid').innerHTML = `
+        <div class="empty">
+          <p>Não foi possível carregar. Verifique a configuração e tente novamente.</p>
+          <p style="font-size:12px;margin-top:8px;color:#ccc">${e.message}</p>
+        </div>`;
+    }
+  }
+
+  function buildFilters() {
+    const cats = [...new Set(allItems.map(i => i.categoria))].sort();
+    const wrap = document.getElementById('filters');
+    cats.forEach(cat => {
+      const btn = document.createElement('button');
+      btn.className = 'pill';
+      btn.dataset.cat = cat;
+      btn.textContent = (CATEGORY_ICONS[cat] || '•') + ' ' + cat;
+      btn.addEventListener('click', () => setCategory(cat));
+      wrap.appendChild(btn);
+    });
+    document.querySelectorAll('.pill').forEach(p =>
+      p.addEventListener('click', () => { if (p.dataset.cat === 'Todos') setCategory('Todos'); })
+    );
+  }
+
+  function setCategory(cat) {
+    activeCategory = cat;
+    document.querySelectorAll('.pill').forEach(p => {
+      p.classList.toggle('active', p.dataset.cat === cat);
+    });
+    render();
+  }
+
+  function render() {
+    const query = document.getElementById('search').value.trim().toLowerCase();
+    let items = allItems;
+
+    if (activeCategory !== 'Todos') {
+      items = items.filter(i => i.categoria === activeCategory);
+    }
+    if (query) {
+      items = items.filter(i =>
+        i.titulo.toLowerCase().includes(query) ||
+        i.conteudo.toLowerCase().includes(query) ||
+        i.tags.some(t => t.toLowerCase().includes(query))
+      );
+    }
+
+    const stats = document.getElementById('stats');
+    const total = document.getElementById('total-badge');
+    total.textContent = `${allItems.length} artigos`;
+    stats.textContent = query || activeCategory !== 'Todos'
+      ? `${items.length} resultado${items.length !== 1 ? 's' : ''} encontrado${items.length !== 1 ? 's' : ''}`
+      : '';
+
+    const grid = document.getElementById('grid');
+    if (items.length === 0) {
+      grid.innerHTML = `<div class="empty">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <p>Nenhum resultado para "<strong>${query || activeCategory}</strong>"</p>
+      </div>`;
+      return;
+    }
+
+    grid.innerHTML = items.map(item => {
+      const icon = CATEGORY_ICONS[item.categoria] || '📌';
+      const audTags = item.audiencia.map(a =>
+        `<span class="tag tag-aud">${a}</span>`).join('');
+      const fonteTag = item.fonte === 'FAQ HUB'
+        ? `<span class="tag tag-fonte-hub">HUB</span>` : '';
+
+      return `
+        <div class="card" data-id="${item.id}">
+          <div class="card-header" onclick="toggle(this)">
+            <div class="card-icon">${icon}</div>
+            <div class="card-meta">
+              <div class="card-title">${highlight(item.titulo, query)}</div>
+              <div class="card-tags">
+                <span class="tag tag-cat">${item.categoria}</span>
+                ${audTags}${fonteTag}
+              </div>
+            </div>
+            <svg class="card-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <div class="card-content"></div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  async function toggle(header) {
+    const card = header.closest('.card');
+    const isOpening = !card.classList.contains('open');
+    card.classList.toggle('open');
+
+    if (isOpening) {
+      const contentEl = card.querySelector('.card-content');
+      if (!contentEl.dataset.loaded) {
+        const id = card.dataset.id;
+        contentEl.innerHTML = '<em style="color:#aaa">Carregando...</em>';
+        try {
+          const res = await fetch(`/api/content?id=${id}`);
+          const data = await res.json();
+          contentEl.innerHTML = data.content ? formatContent(data.content) : '<em style="color:#aaa">Sem conteúdo cadastrado.</em>';
+          contentEl.dataset.loaded = '1';
+        } catch {
+          contentEl.innerHTML = '<em style="color:#aaa">Erro ao carregar.</em>';
+        }
+      }
+    }
+  }
+
+  function highlight(text, query) {
+    if (!query) return text;
+    const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+    return text.replace(regex, '<mark style="background:#fef08a;border-radius:2px">$1</mark>');
+  }
+
+  function formatContent(text) {
+    if (!text) return '';
+    return text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/^## (.+)$/gm, '<strong style="display:block;margin-top:12px;margin-bottom:4px;color:#0a0a0a">$1</strong>')
+      .replace(/^### (.+)$/gm, '<strong style="display:block;margin-top:10px;color:#333">$1</strong>')
+      .replace(/^#### (.+)$/gm, '<strong style="display:block;margin-top:8px;color:#555">$1</strong>')
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/^• (.+)$/gm, '&nbsp;&nbsp;• $1');
+  }
+
+  document.getElementById('search').addEventListener('input', render);
+  loadFAQ();
+</script>
+</body>
+</html>
