@@ -479,71 +479,6 @@
     .cat-aluguel     { background: #fdf4ff; color: #7e22ce; }
     .cat-outros      { background: #f4f4f5; color: #52525b; }
 
-    /* ── RECENT SECTION ── */
-    .recent-section {
-      margin-bottom: 32px;
-    }
-    .section-header {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 12px;
-    }
-    .section-title {
-      font-size: 12px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: var(--gray-500);
-    }
-    .section-line {
-      flex: 1;
-      height: 1px;
-      background: var(--gray-200);
-    }
-    .recent-grid {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    .recent-chip {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      padding: 7px 12px;
-      background: var(--white);
-      border: 1px solid var(--gray-200);
-      border-radius: 8px;
-      cursor: pointer;
-      box-shadow: var(--shadow-sm);
-      transition: box-shadow 0.15s, transform 0.15s;
-      text-align: left;
-      max-width: 280px;
-    }
-    .recent-chip:hover {
-      box-shadow: var(--shadow-md);
-      transform: translateY(-1px);
-    }
-    .recent-chip-icon {
-      font-size: 14px;
-      flex-shrink: 0;
-    }
-    .recent-chip-text {
-      font-size: 12.5px;
-      font-weight: 500;
-      color: var(--black);
-      line-height: 1.3;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .recent-chip-date {
-      font-size: 10.5px;
-      color: var(--gray-400);
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-
     /* ── BADGE NOVO ── */
     .badge-novo {
       display: inline-flex;
@@ -658,15 +593,6 @@
 
 <!-- ── MAIN ── -->
 <main>
-  <!-- ── ATUALIZAÇÕES RECENTES ── -->
-  <div class="recent-section" id="recent-section" style="display:none">
-    <div class="section-header">
-      <span class="section-title">🕒 Atualizações recentes</span>
-      <div class="section-line"></div>
-    </div>
-    <div class="recent-grid" id="recent-grid"></div>
-  </div>
-
   <div class="filters" id="filters">
     <span class="filter-label">Categoria</span>
     <button class="pill active" data-cat="Todos">Todos</button>
@@ -690,17 +616,7 @@
     </div>
   </div>
 
-  <div class="grid" id="grid">
-    <!-- skeletons shown while loading -->
-    ${Array(8).fill(`
-    <div class="skeleton">
-      <div class="sk-block sk-icon"></div>
-      <div class="sk-lines">
-        <div class="sk-block sk-line-title"></div>
-        <div class="sk-block sk-line-tag"></div>
-      </div>
-    </div>`).join('')}
-  </div>
+  <div class="grid" id="grid"></div>
 </main>
 
 <!-- ── FLOATING ACTIONS ── -->
@@ -750,66 +666,32 @@
   let allItems = [];
   let activeCategory = 'Todos';
 
-  /* ── HELPERS DE DATA ── */
-  const NOVO_DIAS = 14; // badge "Novo" para itens dos últimos 14 dias
-
+  /* ── BADGE NOVO ── */
+  const NOVO_DIAS = 14;
   function isNovo(item) {
     const ref = item.criadoEm || item.editadoEm;
     if (!ref) return false;
     return (Date.now() - new Date(ref).getTime()) < NOVO_DIAS * 86400000;
   }
 
-  function formatRelDate(iso) {
-    if (!iso) return '';
-    const d = new Date(iso);
-    const days = Math.floor((Date.now() - d.getTime()) / 86400000);
-    if (days === 0) return 'hoje';
-    if (days === 1) return 'ontem';
-    if (days < 7)  return `${days}d atrás`;
-    if (days < 30) return `${Math.floor(days/7)}sem atrás`;
-    return d.toLocaleDateString('pt-BR', { day:'2-digit', month:'short' });
-  }
-
-  /* ── SEÇÃO RECENTES ── */
-  function buildRecents() {
-    const sorted = [...allItems]
-      .filter(i => i.editadoEm)
-      .sort((a, b) => new Date(b.editadoEm) - new Date(a.editadoEm))
-      .slice(0, 6);
-
-    if (!sorted.length) return;
-
-    const grid = document.getElementById('recent-grid');
-    grid.innerHTML = sorted.map(item => {
-      const cfg = CAT_CONFIG[item.categoria] || { icon: '📌' };
-      return `
-        <button class="recent-chip" onclick="scrollToCard('${item.id}')">
-          <span class="recent-chip-icon">${cfg.icon}</span>
-          <span class="recent-chip-text">${escHtml(item.titulo)}</span>
-          <span class="recent-chip-date">${formatRelDate(item.editadoEm)}</span>
-        </button>`;
-    }).join('');
-
-    document.getElementById('recent-section').style.display = 'block';
-  }
-
-  function scrollToCard(id) {
-    const card = document.querySelector(`.card[data-id="${id}"]`);
-    if (card) {
-      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      card.style.outline = '2px solid var(--accent)';
-      setTimeout(() => card.style.outline = '', 1800);
-    }
-  }
-
   /* ── LOAD ── */
   async function loadFAQ() {
+    // Mostrar skeletons enquanto carrega
+    const skeletonHtml = Array(8).fill(`
+      <div class="skeleton">
+        <div class="sk-block sk-icon"></div>
+        <div class="sk-lines">
+          <div class="sk-block sk-line-title"></div>
+          <div class="sk-block sk-line-tag"></div>
+        </div>
+      </div>`).join('');
+    document.getElementById('grid').innerHTML = skeletonHtml;
+
     try {
       const res = await fetch('/api/faq');
       if (!res.ok) throw new Error(`Erro ${res.status}`);
       allItems = await res.json();
       buildFilters();
-      buildRecents();
       render();
     } catch (e) {
       document.getElementById('grid').innerHTML = `
@@ -985,8 +867,17 @@
   }
 
   /* ── VIEW MODE ── */
+  let currentView = 'grid';
   function setView(mode) {
-    document.getElementById('grid').classList.toggle('list-view', mode === 'list');
+    currentView = mode;
+    const grid = document.getElementById('grid');
+    if (mode === 'list') {
+      grid.style.gridTemplateColumns = '1fr';
+      grid.style.gap = '5px';
+    } else {
+      grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(320px, 1fr))';
+      grid.style.gap = '12px';
+    }
     document.getElementById('btn-grid').classList.toggle('active', mode === 'grid');
     document.getElementById('btn-list').classList.toggle('active', mode === 'list');
   }
