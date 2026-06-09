@@ -51,6 +51,8 @@ module.exports = async function handler(req, res) {
         audiencia: props['Audiência']?.multi_select?.map((a) => a.name) || [],
         fonte: props['Fonte']?.select?.name || '',
         tags: props['Tags']?.multi_select?.map((t) => t.name) || [],
+        editadoEm: page.last_edited_time || null,
+        criadoEm: page.created_time || null,
       };
     }).filter((i) => i.titulo);
 
