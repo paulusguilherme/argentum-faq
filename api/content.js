@@ -51,18 +51,12 @@ async function extractText(blocks, token, depth) {
     const rich = block[type]?.rich_text;
     const text = rich ? rich.map((r) => r.plain_text).join('') : '';
 
-    // reset numbered counter when not a numbered list item
-    if (type !== 'numbered_list_item') numCounter = 0;
-
     let line = '';
     if (type === 'heading_1')               line = `## ${text}`;
     else if (type === 'heading_2')          line = `### ${text}`;
     else if (type === 'heading_3')          line = `#### ${text}`;
     else if (type === 'bulleted_list_item') line = `${indent}• ${text}`;
-    else if (type === 'numbered_list_item') {
-      numCounter++;
-      line = `${indent}${numCounter}. ${text}`;
-    }
+    else if (type === 'numbered_list_item') line = `${indent}• ${text}`;
     else if (type === 'to_do') {
       const checked = block.to_do?.checked ? '☑' : '☐';
       line = `${indent}${checked} ${text}`;
@@ -73,8 +67,8 @@ async function extractText(blocks, token, depth) {
       const emoji = block.callout?.icon?.emoji || '💡';
       line = `${emoji} ${text}`;
     }
-    else if (type === 'divider')  line = `---`;
-    else if (type === 'paragraph') line = text ? `${indent}${text}` : '';
+    else if (type === 'divider')   line = `---`;
+    else if (type === 'paragraph') line = text ? `${indent}${text}` : `\n`;
     else if (text)                 line = `${indent}${text}`;
 
     if (line) lines.push(line);
