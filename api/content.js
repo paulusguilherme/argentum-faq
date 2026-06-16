@@ -24,7 +24,7 @@ module.exports = async function handler(req, res) {
     const data = await response.json();
     const content = extractText(data.results);
 
-    res.setHeader('Cache-Control', 's-maxage=600, stale-while-revalidate');
+    res.setHeader('Cache-Control', 'no-store');
     return res.status(200).json({ content });
   } catch (error) {
     return res.status(500).json({ error: error.message });
