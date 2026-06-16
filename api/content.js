@@ -92,14 +92,13 @@ function renderBlocks(flat) {
     else if (type === 'heading_3')          line = `#### ${text}`;
     else if (type === 'bulleted_list_item') line = `${ind}• ${text}`;
     else if (type === 'numbered_list_item') {
-      counters[depth] = (counters[depth] || 0) + 1;
-      const n = counters[depth];
-      // nível 0 → 1, 2, 3 | nível 1 → a, b, c (sequencial global) | nível 2+ → i, ii, iii
-      let prefix;
-      if (depth === 0)      prefix = `${n}.`;
-      else if (depth === 1) prefix = `${String.fromCharCode(96 + n)}.`;
-      else                  prefix = toRoman(n) + '.';
-      line = `${ind}${prefix} ${text}`;
+      if (depth === 0) {
+        counters[0] = (counters[0] || 0) + 1;
+        line = `${counters[0]}. ${text}`;
+      } else {
+        // sub-itens viram parágrafo simples com indentação
+        line = `${ind}${text}`;
+      }
     }
     else if (type === 'to_do') {
       const checked = block.to_do?.checked ? '☑' : '☐';
