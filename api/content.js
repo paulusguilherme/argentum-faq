@@ -50,7 +50,14 @@ async function extractText(blocks, token, depth, counters) {
   for (const block of blocks) {
     const type = block.type;
     const rich = block[type]?.rich_text;
-    const text = rich ? rich.map((r) => r.plain_text).join('') : '';
+    const text = rich ? rich.map((r) => {
+      let t = r.plain_text;
+      if (r.annotations?.bold)   t = `**${t}**`;
+      if (r.annotations?.italic) t = `_${t}_`;
+      if (r.annotations?.code)   t = `\`${t}\``;
+      if (r.href)                t = `[${t}](${r.href})`;
+      return t;
+    }).join('') : '';
 
     // Reset counter se não for lista numerada
     if (type !== 'numbered_list_item') {
