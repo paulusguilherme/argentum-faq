@@ -41,9 +41,10 @@ async function fetchAllBlocks(blockId, token) {
   return results;
 }
 
-async function extractText(blocks, token, depth) {
+async function extractText(blocks, token, depth, counters) {
   const indent = '  '.repeat(depth);
-  let numCounter = 0;
+  if (!counters) counters = {};
+  const numKey = `num_${depth}`;
   const lines = [];
 
   for (const block of blocks) {
@@ -51,12 +52,26 @@ async function extractText(blocks, token, depth) {
     const rich = block[type]?.rich_text;
     const text = rich ? rich.map((r) => r.plain_text).join('') : '';
 
+    // Reset counter se não for lista numerada
+    if (type !== 'numbered_list_item') {
+      counters[numKey] = 0;
+    }
+
     let line = '';
     if (type === 'heading_1')               line = `## ${text}`;
     else if (type === 'heading_2')          line = `### ${text}`;
     else if (type === 'heading_3')          line = `#### ${text}`;
     else if (type === 'bulleted_list_item') line = `${indent}• ${text}`;
-    else if (type === 'numbered_list_item') line = `${indent}• ${text}`;
+    else if (type === 'numbered_list_item') {
+      counters[numKey] = (counters[numKey] || 0) + 1;
+      const n = counters[numKey];
+      // depth 0 → 1, 2, 3 | depth 1 → a, b, c | depth 2+ → i, ii, iii
+      let prefix;
+      if (depth === 0)      prefix = `${n}.`;
+      else if (depth === 1) prefix = `${String.fromCharCode(96 + n)}.`;
+      else                  prefix = toRoman(n) + '.';
+      line = `${indent}${prefix} ${text}`;
+    }
     else if (type === 'to_do') {
       const checked = block.to_do?.checked ? '☑' : '☐';
       line = `${indent}${checked} ${text}`;
@@ -76,10 +91,19 @@ async function extractText(blocks, token, depth) {
     // Busca filhos recursivamente (sub-listas, toggles, etc.)
     if (block.has_children) {
       const children = await fetchAllBlocks(block.id, token);
-      const childText = await extractText(children, token, depth + 1);
+      const childText = await extractText(children, token, depth + 1, counters);
       if (childText) lines.push(childText);
     }
   }
 
   return lines.filter(Boolean).join('\n');
+}
+
+function toRoman(n) {
+  const vals = [10,'x',9,'ix',5,'v',4,'iv',1,'i'];
+  let result = '';
+  for (let i = 0; i < vals.length; i += 2) {
+    while (n >= vals[i]) { result += vals[i+1]; n -= vals[i]; }
+  }
+  return result;
 }
