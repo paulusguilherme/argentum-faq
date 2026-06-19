@@ -110,9 +110,22 @@ function renderBlocks(flat) {
       const emoji = block.callout?.icon?.emoji || '💡';
       line = `${emoji} ${text}`;
     }
-    else if (type === 'divider')   line = `---`;
-    else if (type === 'paragraph') line = text ? `${ind}${text}` : '\n';
-    else if (text)                 line = `${ind}${text}`;
+    else if (type === 'divider')      line = `---`;
+    else if (type === 'paragraph')    line = text ? `${ind}${text}` : '\n';
+    else if (type === 'bookmark') {
+      const url     = block.bookmark?.url || '';
+      const caption = richText(block.bookmark?.caption);
+      line = `[${caption || url}](${url})`;
+    }
+    else if (type === 'link_preview') {
+      const url = block.link_preview?.url || '';
+      line = `[${url}](${url})`;
+    }
+    else if (type === 'embed') {
+      const url = block.embed?.url || '';
+      line = `[${url}](${url})`;
+    }
+    else if (text)                    line = `${ind}${text}`;
 
     if (line) lines.push(line);
   }
