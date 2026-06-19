@@ -1106,31 +1106,33 @@
     </div>
 
     <!-- Tabela de rendimento -->
-    <div class="calc-table-header">
-      <div>
-        <p class="calc-table-title">Rendimento por Prazo</p>
-        <p class="calc-table-sub">Líquido após IOF e IR — valores em reais</p>
+    <div style="background:#0d1b3e;border:1px solid rgba(255,255,255,0.07);border-radius:12px;overflow:hidden;">
+      <div class="calc-table-header" style="padding:18px 20px 14px;">
+        <div>
+          <p class="calc-table-title">Rendimento por Prazo</p>
+          <p class="calc-table-sub">Líquido após IOF e IR — valores em reais</p>
+        </div>
+        <div class="toggle-group">
+          <button class="toggle-btn active" id="toggle-brl" onclick="setCalcView('brl')">Líquido R$</button>
+          <button class="toggle-btn" id="toggle-cdi" onclick="setCalcView('cdi')">% CDI equiv.</button>
+        </div>
       </div>
-      <div class="toggle-group">
-        <button class="toggle-btn active" id="toggle-brl" onclick="setView('brl')">Líquido R$</button>
-        <button class="toggle-btn" id="toggle-cdi" onclick="setView('cdi')">% CDI equiv.</button>
+      <div class="calc-table-wrap" style="border:none;border-radius:0;border-top:1px solid rgba(255,255,255,0.06);">
+        <table class="calc-table">
+          <thead>
+            <tr>
+              <th>D.U.</th>
+              <th>Data</th>
+              <th>IOF</th>
+              <th>Conta Rem.</th>
+              <th>CDB</th>
+              <th>Compromissada</th>
+              <th>Melhor opção</th>
+            </tr>
+          </thead>
+          <tbody id="calc-tbody"></tbody>
+        </table>
       </div>
-    </div>
-    <div class="calc-table-wrap">
-      <table class="calc-table">
-        <thead>
-          <tr>
-            <th>D.U.</th>
-            <th>Data</th>
-            <th>IOF</th>
-            <th id="th-cr">Conta Rem.</th>
-            <th id="th-cdb">CDB</th>
-            <th id="th-comp">Compromissada</th>
-            <th>Melhor opção</th>
-          </tr>
-        </thead>
-        <tbody id="calc-tbody"></tbody>
-      </table>
     </div>
     <p style="font-size:11px;color:var(--gray-400);margin-top:10px;line-height:1.7">
       (1) Líquido após IOF e IR. &nbsp;(2) CDI = SELIC − 0,10% a.a. / 252 d.u. &nbsp;(3) IOF regressivo (0% partir do 30º dia corrido). &nbsp;(4) IR 22,5%. &nbsp;(5) Não considera variação de juros.
@@ -1148,22 +1150,9 @@
 
   <div class="toolbar">
     <div class="stats" id="stats"></div>
-    <div class="view-toggle">
-      <button class="view-btn active" id="btn-grid" onclick="setView('grid')" title="Grade">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
-          <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
-        </svg>
-      </button>
-      <button class="view-btn" id="btn-list" onclick="setView('list')" title="Lista">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
-        </svg>
-      </button>
-    </div>
   </div>
 
-  <div class="grid" id="grid"></div>
+  <div class="grid list-view" id="grid"></div>
 </main>
 </div><!-- end #section-faq -->
 
@@ -1388,13 +1377,7 @@
     return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
-  function setView(mode) {
-    currentView = mode;
-    const grid = document.getElementById('grid');
-    grid.classList.toggle('list-view', mode === 'list');
-    document.getElementById('btn-grid').classList.toggle('active', mode === 'grid');
-    document.getElementById('btn-list').classList.toggle('active', mode === 'list');
-  }
+  // view mode removido — somente lista
 
   document.addEventListener('keydown', e => {
     const s = document.getElementById('search');
@@ -1522,7 +1505,7 @@
     }
   }
 
-  function setView(mode) {
+  function setCalcView(mode) {
     _viewMode = mode;
     document.getElementById('toggle-brl').classList.toggle('active', mode === 'brl');
     document.getElementById('toggle-cdi').classList.toggle('active', mode === 'cdi');
