@@ -702,6 +702,23 @@
     .calc-table .pos { color: #16a34a; font-weight: 600; }
     .calc-table .neg { color: #dc2626; }
 
+    /* ── TOOL NAV ── */
+    .tool-nav-btn {
+      padding: 11px 16px;
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--gray-400);
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.15s;
+      margin-bottom: -1px;
+      white-space: nowrap;
+    }
+    .tool-nav-btn:hover  { color: var(--black); }
+    .tool-nav-btn.active { color: var(--black); border-bottom-color: var(--accent); font-weight: 600; }
+
     @media (max-width: 768px) {
       .calc-products, .calc-summary { grid-template-columns: 1fr; }
     }
@@ -798,8 +815,21 @@
 
 <!-- ── TOOLS SECTION ── -->
 <div id="section-tools">
-  <div class="calc-wrap">
-    <p class="calc-title">Calculadora Compromissada</p>
+  <div style="background:var(--white);border-bottom:1px solid var(--gray-200);">
+    <div style="max-width:1140px;margin:0 auto;padding:0 32px;display:flex;gap:4px;overflow-x:auto;">
+      <button class="tool-nav-btn active" onclick="switchTool('compromissada')" id="tnav-compromissada">
+        Calc. Compromissada
+      </button>
+      <!-- futuras ferramentas aqui -->
+    </div>
+  </div>
+
+  <!-- ── CALCULADORA COMPROMISSADA ── -->
+  <div id="tool-compromissada" class="calc-wrap">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px;">
+      <p class="calc-title" style="margin:0">Calculadora Compromissada</p>
+      <span id="selic-status" style="font-size:11px;color:var(--gray-400);">Buscando SELIC...</span>
+    </div>
     <p class="calc-sub">Simula rendimentos líquidos após IOF e IR. Valores em reais. Não considera mudança de juros no período.</p>
 
     <!-- Inputs globais -->
@@ -812,12 +842,8 @@
         </div>
       </div>
       <div class="inp-group">
-        <label>SELIC atual (% a.a.)</label>
+        <label>SELIC (% a.a.)</label>
         <input type="number" id="c-selic" value="14.75" step="0.25" min="0" max="50" oninput="calcular()">
-      </div>
-      <div class="inp-group">
-        <label>D.U. por ano</label>
-        <input type="number" id="c-du-ano" value="252" min="200" max="260" oninput="calcular()">
       </div>
       <div class="inp-group">
         <label>Simular até (D.U.)</label>
@@ -829,9 +855,9 @@
     <div class="calc-products">
       <div class="prod-card conta-rem">
         <div class="prod-name">Conta Remunerada</div>
-        <div class="prod-inst" id="cr-banco-label">Banco</div>
+        <div class="prod-inst">Banco</div>
         <div class="prod-field">
-          <input type="number" id="c-cr-pct" value="10" min="0" max="200" step="0.5" oninput="calcular()">
+          <input type="number" id="c-cr-pct" value="10" min="0" max="200" step="5" oninput="calcular()">
           <span>% do CDI</span>
         </div>
         <span class="prod-badge badge-red">Incide IOF</span>
@@ -841,7 +867,7 @@
         <div class="prod-name">CDB</div>
         <div class="prod-inst">XP</div>
         <div class="prod-field">
-          <input type="number" id="c-cdb-pct" value="100" min="0" max="200" step="0.5" oninput="calcular()">
+          <input type="number" id="c-cdb-pct" value="100" min="0" max="200" step="5" oninput="calcular()">
           <span>% do CDI</span>
         </div>
         <span class="prod-badge badge-red">Incide IOF</span>
@@ -851,7 +877,7 @@
         <div class="prod-name">Compromissada</div>
         <div class="prod-inst">XP · Isenta IOF</div>
         <div class="prod-field">
-          <input type="number" id="c-comp-pct" value="100" min="0" max="200" step="0.5" oninput="calcular()">
+          <input type="number" id="c-comp-pct" value="100" min="0" max="200" step="5" oninput="calcular()">
           <span>% do CDI</span>
         </div>
         <span class="prod-badge badge-green">Isenta de IOF</span>
@@ -887,8 +913,8 @@
     <p style="font-size:11px;color:var(--gray-400);margin-top:14px;line-height:1.7">
       (1) Valores em reais líquidos após IOF e IR. &nbsp;(2) CDI diário = SELIC − 0,10% a.a. convertida para taxa diária (252 d.u.). &nbsp;(3) IOF regressivo por dias corridos (0% a partir do 30º dia). &nbsp;(4) IR 22,5% sobre rendimento líquido de IOF. &nbsp;(5) Não considera variação de juros no período.
     </p>
-  </div>
-</div>
+  </div><!-- end tool-compromissada -->
+</div><!-- end section-tools -->
 
 <!-- ── FAQ SECTION ── -->
 <div id="section-faq">
@@ -1199,7 +1225,7 @@
   function calcular() {
     const valor    = parseFloat(document.getElementById('c-valor').value)   || 0;
     const selic    = parseFloat(document.getElementById('c-selic').value)   / 100 || 0;
-    const duAno    = parseFloat(document.getElementById('c-du-ano').value)  || 252;
+    const duAno    = 252;
     const maxDU    = parseInt(document.getElementById('c-max-du').value)    || 30;
     const pctCR    = parseFloat(document.getElementById('c-cr-pct').value)  / 100 || 0;
     const pctCDB   = parseFloat(document.getElementById('c-cdb-pct').value) / 100 || 0;
@@ -1282,11 +1308,39 @@
     document.getElementById('section-tools').style.display = tab === 'tools' ? 'block' : 'none';
     document.querySelectorAll('.tab-btn').forEach((b, i) =>
       b.classList.toggle('active', (i === 0) === (tab === 'faq')));
-    if (tab === 'tools') calcular();
+    if (tab === 'tools') { fetchSELIC(); }
   }
 
-  // Inicializa calculadora
-  calcular();
+  /* ── Tool sub-nav ── */
+  function switchTool(toolId) {
+    document.querySelectorAll('.tool-nav-btn').forEach(b =>
+      b.classList.toggle('active', b.id === 'tnav-' + toolId));
+    document.querySelectorAll('.calc-wrap').forEach(el =>
+      el.style.display = el.id === 'tool-' + toolId ? 'block' : 'none');
+  }
+
+  /* ── Busca SELIC do BCB ── */
+  async function fetchSELIC() {
+    const statusEl = document.getElementById('selic-status');
+    const selicEl  = document.getElementById('c-selic');
+    if (!statusEl || !selicEl) return;
+    statusEl.textContent = 'Buscando SELIC...';
+    try {
+      const res  = await fetch('https://api.bcb.gov.br/dados/serie/bcdata.sgs.432/dados/ultimos/1?formato=json');
+      const data = await res.json();
+      const selic = parseFloat(data[0].valor.replace(',', '.'));
+      selicEl.value = selic;
+      statusEl.textContent = `SELIC: ${selic.toFixed(2).replace('.', ',')}% a.a. (BCB)`;
+      statusEl.style.color = 'var(--gray-400)';
+      calcular();
+    } catch {
+      statusEl.textContent = 'SELIC não obtida — insira manualmente';
+      statusEl.style.color = '#e55';
+    }
+  }
+
+  // Inicializa calculadora e busca SELIC
+  fetchSELIC();
 </script>
 </body>
 </html>
