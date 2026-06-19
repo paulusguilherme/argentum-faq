@@ -477,12 +477,241 @@
     .fab-pipefy   { background: var(--black); color: #fff; }
     .fab-whatsapp { background: #25D366; color: #fff; }
 
+    /* ── TABS ── */
+    .tab-bar {
+      background: var(--white);
+      border-bottom: 1px solid var(--gray-200);
+      padding: 0 32px;
+    }
+    .tab-bar-inner {
+      max-width: 1140px;
+      margin: 0 auto;
+      display: flex;
+      gap: 0;
+    }
+    .tab-btn {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 13px 18px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--gray-400);
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.15s;
+      margin-bottom: -1px;
+    }
+    .tab-btn:hover { color: var(--black); }
+    .tab-btn.active { color: var(--black); border-bottom-color: var(--black); font-weight: 600; }
+    .tab-btn svg { opacity: 0.5; }
+    .tab-btn.active svg { opacity: 1; }
+
+    /* ── CALCULATOR ── */
+    #section-tools { display: none; }
+    #section-faq   { display: block; }
+
+    .calc-wrap {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 28px 32px 80px;
+    }
+    .calc-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--black);
+      margin-bottom: 4px;
+    }
+    .calc-sub {
+      font-size: 12.5px;
+      color: var(--gray-400);
+      margin-bottom: 24px;
+    }
+
+    /* inputs row */
+    .calc-inputs {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .inp-group { display: flex; flex-direction: column; gap: 5px; }
+    .inp-group label {
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--gray-400);
+    }
+    .inp-group input {
+      padding: 8px 12px;
+      border: 1px solid var(--gray-200);
+      border-radius: 7px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--black);
+      background: var(--white);
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      width: 100%;
+    }
+    .inp-group input:focus {
+      border-color: var(--black);
+      box-shadow: 0 0 0 3px rgba(6,9,43,0.05);
+    }
+    .inp-group .inp-prefix {
+      position: relative;
+    }
+    .inp-group .inp-prefix span {
+      position: absolute;
+      left: 11px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 13px;
+      color: var(--gray-400);
+      pointer-events: none;
+    }
+    .inp-group .inp-prefix input { padding-left: 26px; }
+
+    /* product cards */
+    .calc-products {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .prod-card {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+    .prod-card.compromissada { border-top: 3px solid var(--accent); }
+    .prod-card.cdb           { border-top: 3px solid #2563eb; }
+    .prod-card.conta-rem     { border-top: 3px solid #6b7280; }
+    .prod-name {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--gray-400);
+      margin-bottom: 2px;
+    }
+    .prod-inst {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--black);
+      margin-bottom: 12px;
+    }
+    .prod-field {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 12.5px;
+      color: var(--gray-500);
+    }
+    .prod-field input[type=number] {
+      width: 80px;
+      padding: 5px 8px;
+      border: 1px solid var(--gray-200);
+      border-radius: 5px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--black);
+      outline: none;
+      text-align: right;
+    }
+    .prod-field input:focus { border-color: var(--black); }
+    .prod-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      margin-top: 2px;
+    }
+    .badge-green { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
+    .badge-red   { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+    .badge-gray  { background: var(--gray-100); color: var(--gray-500); border: 1px solid var(--gray-200); }
+
+    /* result summary */
+    .calc-summary {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .sum-card {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius);
+      padding: 16px;
+      text-align: center;
+    }
+    .sum-label { font-size: 11px; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .sum-value { font-size: 22px; font-weight: 700; color: var(--black); }
+    .sum-sub   { font-size: 11px; color: var(--gray-400); margin-top: 3px; }
+    .sum-card.best { border-color: var(--accent); background: rgba(184,160,96,0.04); }
+    .sum-card.best .sum-label { color: var(--accent2); }
+
+    /* table */
+    .calc-table-wrap {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius);
+      overflow: auto;
+    }
+    .calc-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12.5px;
+    }
+    .calc-table th {
+      background: var(--gray-50);
+      padding: 9px 12px;
+      text-align: right;
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--gray-400);
+      border-bottom: 1px solid var(--gray-200);
+      white-space: nowrap;
+    }
+    .calc-table th:first-child, .calc-table th:nth-child(2), .calc-table th:nth-child(3) { text-align: left; }
+    .calc-table td {
+      padding: 8px 12px;
+      text-align: right;
+      color: var(--gray-600);
+      border-bottom: 1px solid var(--gray-100);
+      white-space: nowrap;
+    }
+    .calc-table td:first-child, .calc-table td:nth-child(2), .calc-table td:nth-child(3) { text-align: left; }
+    .calc-table tr:last-child td { border-bottom: none; }
+    .calc-table tr.highlight { background: rgba(184,160,96,0.05); }
+    .best-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+    .calc-table .pos { color: #16a34a; font-weight: 600; }
+    .calc-table .neg { color: #dc2626; }
+
+    @media (max-width: 768px) {
+      .calc-products, .calc-summary { grid-template-columns: 1fr; }
+    }
     @media (max-width: 640px) {
       header, main { padding-left: 16px; padding-right: 16px; }
       .hero { padding: 28px 16px 36px; }
       .fab span { display: none; }
       .fab { padding: 12px; border-radius: 50%; }
       .grid { grid-template-columns: 1fr; }
+      .tab-bar, .calc-wrap { padding-left: 16px; padding-right: 16px; }
     }
   </style>
 </head>
@@ -549,7 +778,120 @@
   </div>
 </div>
 
-<!-- ── MAIN ── -->
+<!-- ── TABS ── -->
+<div class="tab-bar">
+  <div class="tab-bar-inner">
+    <button class="tab-btn active" onclick="switchTab('faq')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+      </svg>
+      Artigos
+    </button>
+    <button class="tab-btn" onclick="switchTab('tools')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+      </svg>
+      Ferramentas
+    </button>
+  </div>
+</div>
+
+<!-- ── TOOLS SECTION ── -->
+<div id="section-tools">
+  <div class="calc-wrap">
+    <p class="calc-title">Calculadora Compromissada</p>
+    <p class="calc-sub">Simula rendimentos líquidos após IOF e IR. Valores em reais. Não considera mudança de juros no período.</p>
+
+    <!-- Inputs globais -->
+    <div class="calc-inputs">
+      <div class="inp-group">
+        <label>Valor aplicado</label>
+        <div class="inp-prefix">
+          <span>R$</span>
+          <input type="number" id="c-valor" value="1000000" min="0" step="1000" oninput="calcular()">
+        </div>
+      </div>
+      <div class="inp-group">
+        <label>SELIC atual (% a.a.)</label>
+        <input type="number" id="c-selic" value="14.75" step="0.25" min="0" max="50" oninput="calcular()">
+      </div>
+      <div class="inp-group">
+        <label>D.U. por ano</label>
+        <input type="number" id="c-du-ano" value="252" min="200" max="260" oninput="calcular()">
+      </div>
+      <div class="inp-group">
+        <label>Simular até (D.U.)</label>
+        <input type="number" id="c-max-du" value="30" min="1" max="252" oninput="calcular()">
+      </div>
+    </div>
+
+    <!-- Produtos -->
+    <div class="calc-products">
+      <div class="prod-card conta-rem">
+        <div class="prod-name">Conta Remunerada</div>
+        <div class="prod-inst" id="cr-banco-label">Banco</div>
+        <div class="prod-field">
+          <input type="number" id="c-cr-pct" value="10" min="0" max="200" step="0.5" oninput="calcular()">
+          <span>% do CDI</span>
+        </div>
+        <span class="prod-badge badge-red">Incide IOF</span>
+        <span class="prod-badge badge-gray" style="margin-left:4px">IR 22,5%</span>
+      </div>
+      <div class="prod-card cdb">
+        <div class="prod-name">CDB</div>
+        <div class="prod-inst">XP</div>
+        <div class="prod-field">
+          <input type="number" id="c-cdb-pct" value="100" min="0" max="200" step="0.5" oninput="calcular()">
+          <span>% do CDI</span>
+        </div>
+        <span class="prod-badge badge-red">Incide IOF</span>
+        <span class="prod-badge badge-gray" style="margin-left:4px">IR 22,5%</span>
+      </div>
+      <div class="prod-card compromissada">
+        <div class="prod-name">Compromissada</div>
+        <div class="prod-inst">XP · Isenta IOF</div>
+        <div class="prod-field">
+          <input type="number" id="c-comp-pct" value="100" min="0" max="200" step="0.5" oninput="calcular()">
+          <span>% do CDI</span>
+        </div>
+        <span class="prod-badge badge-green">Isenta de IOF</span>
+        <span class="prod-badge badge-gray" style="margin-left:4px">IR 22,5%</span>
+      </div>
+    </div>
+
+    <!-- Resumo no prazo selecionado -->
+    <div class="calc-summary" id="calc-summary">
+      <div class="sum-card"><div class="sum-label">Conta Remunerada</div><div class="sum-value" id="s-cr">—</div><div class="sum-sub" id="s-cr-sub"></div></div>
+      <div class="sum-card"><div class="sum-label">CDB</div><div class="sum-value" id="s-cdb">—</div><div class="sum-sub" id="s-cdb-sub"></div></div>
+      <div class="sum-card compromissada"><div class="sum-label">Compromissada</div><div class="sum-value" id="s-comp">—</div><div class="sum-sub" id="s-comp-sub"></div></div>
+    </div>
+
+    <!-- Tabela -->
+    <div class="calc-table-wrap">
+      <table class="calc-table">
+        <thead>
+          <tr>
+            <th>D.U.</th>
+            <th>Data</th>
+            <th>IOF</th>
+            <th>Conta Rem. líq.</th>
+            <th>CDB líq.</th>
+            <th>Compromissada líq.</th>
+            <th>Melhor opção</th>
+          </tr>
+        </thead>
+        <tbody id="calc-tbody"></tbody>
+      </table>
+    </div>
+
+    <p style="font-size:11px;color:var(--gray-400);margin-top:14px;line-height:1.7">
+      (1) Valores em reais líquidos após IOF e IR. &nbsp;(2) CDI diário = SELIC − 0,10% a.a. convertida para taxa diária (252 d.u.). &nbsp;(3) IOF regressivo por dias corridos (0% a partir do 30º dia). &nbsp;(4) IR 22,5% sobre rendimento líquido de IOF. &nbsp;(5) Não considera variação de juros no período.
+    </p>
+  </div>
+</div>
+
+<!-- ── FAQ SECTION ── -->
+<div id="section-faq">
 <main>
   <div class="filters-row" id="filters">
     <span class="filter-label">Filtrar</span>
@@ -575,6 +917,7 @@
 
   <div class="grid" id="grid"></div>
 </main>
+</div><!-- end #section-faq -->
 
 <!-- ── FLOATING ACTIONS ── -->
 <div class="fab-group">
@@ -814,6 +1157,136 @@
 
   document.getElementById('search').addEventListener('input', render);
   loadFAQ();
+
+  /* ══════════════════════════════════════════
+     CALCULADORA COMPROMISSADA
+  ══════════════════════════════════════════ */
+
+  // IOF regressivo por dias CORRIDOS (índice = dia corrido, 0-based array offset by 1)
+  const IOF = [0,0.96,0.93,0.90,0.86,0.83,0.80,0.76,0.73,0.70,0.66,0.63,0.60,
+               0.56,0.53,0.50,0.46,0.43,0.40,0.36,0.33,0.30,0.26,0.23,0.20,
+               0.16,0.13,0.10,0.06,0.03];
+  function getIOF(diasCorridos) {
+    if (diasCorridos <= 0) return 0;
+    if (diasCorridos >= 30) return 0;
+    return IOF[diasCorridos] ?? 0;
+  }
+
+  // Adiciona n dias úteis a uma data, retorna {date, calDays}
+  function addDU(start, n) {
+    const d = new Date(start);
+    let count = 0;
+    while (count < n) {
+      d.setDate(d.getDate() + 1);
+      const dow = d.getDay();
+      if (dow !== 0 && dow !== 6) count++;
+    }
+    const calDays = Math.round((d - start) / 86400000);
+    return { date: d, calDays };
+  }
+
+  // IR por prazo em dias corridos
+  function getIR(diasCorridos) {
+    if (diasCorridos <= 180) return 0.225;
+    if (diasCorridos <= 360) return 0.20;
+    if (diasCorridos <= 720) return 0.175;
+    return 0.15;
+  }
+
+  const brl = (v) => v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const pct = (v) => (v * 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%';
+
+  function calcular() {
+    const valor    = parseFloat(document.getElementById('c-valor').value)   || 0;
+    const selic    = parseFloat(document.getElementById('c-selic').value)   / 100 || 0;
+    const duAno    = parseFloat(document.getElementById('c-du-ano').value)  || 252;
+    const maxDU    = parseInt(document.getElementById('c-max-du').value)    || 30;
+    const pctCR    = parseFloat(document.getElementById('c-cr-pct').value)  / 100 || 0;
+    const pctCDB   = parseFloat(document.getElementById('c-cdb-pct').value) / 100 || 0;
+    const pctComp  = parseFloat(document.getElementById('c-comp-pct').value)/ 100 || 0;
+
+    // CDI diário: SELIC - 10bps convertida para taxa diária
+    const cdiDia = Math.pow(1 + Math.max(0, selic - 0.001), 1 / duAno) - 1;
+
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    // avança para próximo dia útil se hoje for fim de semana
+    while (today.getDay() === 0 || today.getDay() === 6) today.setDate(today.getDate() + 1);
+
+    const rows = [];
+    for (let du = 1; du <= maxDU; du++) {
+      const { date, calDays } = addDU(today, du);
+      const iof = getIOF(calDays);
+      const ir  = getIR(calDays);
+
+      // Rendimento bruto acumulado (juros compostos por d.u.)
+      const brutoCR   = valor * (Math.pow(1 + cdiDia * pctCR,   du) - 1);
+      const brutoCDB  = valor * (Math.pow(1 + cdiDia * pctCDB,  du) - 1);
+      const brutoComp = valor * (Math.pow(1 + cdiDia * pctComp, du) - 1);
+
+      // Aplicar IOF (conta rem e CDB têm IOF; compromissada isenta)
+      const aposIOFcr  = brutoCR  * (1 - iof);
+      const aposIOFcdb = brutoCDB * (1 - iof);
+
+      // Aplicar IR
+      const netCR   = aposIOFcr  * (1 - ir);
+      const netCDB  = aposIOFcdb * (1 - ir);
+      const netComp = brutoComp  * (1 - ir);
+
+      const best = netComp >= netCDB && netComp >= netCR ? 'comp'
+                 : netCDB  >= netComp && netCDB  >= netCR  ? 'cdb' : 'cr';
+
+      rows.push({ du, date, calDays, iof, netCR, netCDB, netComp, best });
+    }
+
+    // Preenche tabela
+    const fmt = new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: '2-digit' });
+    const tbody = document.getElementById('calc-tbody');
+    tbody.innerHTML = rows.map(r => {
+      const bestLabel = r.best === 'comp' ? `<span class="best-badge badge-green">Compromissada</span>`
+                       : r.best === 'cdb' ? `<span class="best-badge badge-gray">CDB</span>`
+                       : `<span class="best-badge badge-gray">Conta Rem.</span>`;
+      const iofPct = r.iof > 0 ? `<span class="neg">${(r.iof*100).toFixed(0)}%</span>` : `<span class="pos">0%</span>`;
+      return `<tr${r.best==='comp'?' class="highlight"':''}>
+        <td>${r.du}</td>
+        <td>${fmt.format(r.date)}</td>
+        <td>${iofPct}</td>
+        <td>R$ ${brl(r.netCR)}</td>
+        <td>R$ ${brl(r.netCDB)}</td>
+        <td><strong>R$ ${brl(r.netComp)}</strong></td>
+        <td>${bestLabel}</td>
+      </tr>`;
+    }).join('');
+
+    // Resumo no último período
+    const last = rows[rows.length - 1];
+    if (last) {
+      const du = last.du;
+      document.getElementById('s-cr').textContent   = `R$ ${brl(last.netCR)}`;
+      document.getElementById('s-cdb').textContent  = `R$ ${brl(last.netCDB)}`;
+      document.getElementById('s-comp').textContent = `R$ ${brl(last.netComp)}`;
+      document.getElementById('s-cr-sub').textContent  = `em ${du} D.U.`;
+      document.getElementById('s-cdb-sub').textContent = `em ${du} D.U.`;
+      document.getElementById('s-comp-sub').textContent= `em ${du} D.U.`;
+
+      // destaca melhor
+      document.querySelectorAll('.calc-summary .sum-card').forEach(c => c.classList.remove('best'));
+      const idx = last.best === 'cr' ? 0 : last.best === 'cdb' ? 1 : 2;
+      document.querySelectorAll('.calc-summary .sum-card')[idx].classList.add('best');
+    }
+  }
+
+  /* ── Tab switch ── */
+  function switchTab(tab) {
+    document.getElementById('section-faq').style.display   = tab === 'faq'   ? 'block' : 'none';
+    document.getElementById('section-tools').style.display = tab === 'tools' ? 'block' : 'none';
+    document.querySelectorAll('.tab-btn').forEach((b, i) =>
+      b.classList.toggle('active', (i === 0) === (tab === 'faq')));
+    if (tab === 'tools') calcular();
+  }
+
+  // Inicializa calculadora
+  calcular();
 </script>
 </body>
 </html>
