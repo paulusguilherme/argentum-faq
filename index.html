@@ -530,50 +530,100 @@
       margin-bottom: 24px;
     }
 
-    /* inputs row */
+    /* ── INPUT CARDS (dark) ── */
     .calc-inputs {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 12px;
-      margin-bottom: 20px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 24px;
     }
-    .inp-group { display: flex; flex-direction: column; gap: 5px; }
-    .inp-group label {
-      font-size: 10.5px;
+    .inp-card {
+      background: #0d1b3e;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 12px;
+      padding: 18px 20px 16px;
+    }
+    .inp-card-label {
+      font-size: 9px;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.8px;
-      color: var(--gray-400);
+      letter-spacing: 1.1px;
+      color: rgba(255,255,255,0.38);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
-    .inp-group input {
-      padding: 8px 12px;
-      border: 1px solid var(--gray-200);
-      border-radius: 7px;
+    .inp-card-label::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+    .inp-card-value {
+      display: flex;
+      align-items: baseline;
+      gap: 5px;
+      margin-bottom: 14px;
+      min-height: 36px;
+    }
+    .inp-card-value .v-prefix {
       font-size: 14px;
+      font-weight: 400;
+      color: rgba(255,255,255,0.55);
+      line-height: 1;
+    }
+    .inp-card-value .v-num {
+      font-size: 28px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1;
+    }
+    .inp-card-value .v-unit {
+      font-size: 12px;
       font-weight: 500;
-      color: var(--black);
-      background: var(--white);
-      outline: none;
-      transition: border-color 0.15s, box-shadow 0.15s;
+      color: var(--accent);
+      margin-left: 3px;
+    }
+    /* range slider */
+    .inp-card input[type=range] {
+      -webkit-appearance: none;
+      appearance: none;
       width: 100%;
+      height: 3px;
+      border-radius: 2px;
+      outline: none;
+      cursor: pointer;
+      background: linear-gradient(to right, var(--accent) var(--fill,50%), rgba(255,255,255,0.14) var(--fill,50%));
     }
-    .inp-group input:focus {
-      border-color: var(--black);
-      box-shadow: 0 0 0 3px rgba(6,9,43,0.05);
+    .inp-card input[type=range]:disabled {
+      cursor: default;
+      background: linear-gradient(to right, rgba(255,255,255,0.22) var(--fill,50%), rgba(255,255,255,0.08) var(--fill,50%));
     }
-    .inp-group .inp-prefix {
-      position: relative;
+    .inp-card input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 15px; height: 15px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 3px rgba(184,160,96,0.28);
+      cursor: pointer;
     }
-    .inp-group .inp-prefix span {
-      position: absolute;
-      left: 11px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 13px;
-      color: var(--gray-400);
-      pointer-events: none;
+    .inp-card input[type=range]:disabled::-webkit-slider-thumb {
+      background: rgba(255,255,255,0.28);
+      box-shadow: none;
+      cursor: default;
     }
-    .inp-group .inp-prefix input { padding-left: 26px; }
+    .inp-card input[type=range]::-moz-range-thumb {
+      width: 15px; height: 15px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: none;
+      cursor: pointer;
+    }
+    @media (max-width: 768px) {
+      .calc-inputs { grid-template-columns: repeat(2, 1fr); }
+    }
 
     /* product cards */
     .calc-products {
@@ -657,21 +707,63 @@
     .sum-card.best { border-color: var(--accent); background: rgba(184,160,96,0.04); }
     .sum-card.best .sum-label { color: var(--accent2); }
 
+    /* ── TABLE HEADER BAR ── */
+    .calc-table-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .calc-table-title { font-size: 15px; font-weight: 700; color: var(--black); margin: 0 0 2px; }
+    .calc-table-sub   { font-size: 11.5px; color: var(--gray-400); margin: 0; }
+    .toggle-group {
+      display: flex;
+      background: var(--gray-100);
+      border-radius: 8px;
+      padding: 3px;
+      gap: 2px;
+    }
+    .toggle-btn {
+      padding: 5px 14px;
+      border-radius: 6px;
+      border: none;
+      background: transparent;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--gray-400);
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .toggle-btn.active {
+      background: var(--black);
+      color: var(--white);
+    }
+
     /* table */
     .calc-table-wrap {
       background: var(--white);
       border: 1px solid var(--gray-200);
       border-radius: var(--radius);
-      overflow: auto;
+      overflow-x: auto;
+      max-height: 420px;
+      overflow-y: auto;
     }
     .calc-table {
       width: 100%;
       border-collapse: collapse;
       font-size: 12.5px;
     }
-    .calc-table th {
+    .calc-table thead th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
       background: var(--gray-50);
-      padding: 9px 12px;
+      padding: 9px 14px;
       text-align: right;
       font-size: 10.5px;
       font-weight: 700;
@@ -681,26 +773,30 @@
       border-bottom: 1px solid var(--gray-200);
       white-space: nowrap;
     }
-    .calc-table th:first-child, .calc-table th:nth-child(2), .calc-table th:nth-child(3) { text-align: left; }
+    .calc-table thead th:first-child, .calc-table thead th:nth-child(2), .calc-table thead th:nth-child(3) { text-align: left; }
     .calc-table td {
-      padding: 8px 12px;
+      padding: 9px 14px;
       text-align: right;
-      color: var(--gray-600);
+      color: var(--gray-700);
       border-bottom: 1px solid var(--gray-100);
       white-space: nowrap;
+      font-size: 13px;
     }
-    .calc-table td:first-child, .calc-table td:nth-child(2), .calc-table td:nth-child(3) { text-align: left; }
+    .calc-table td:first-child { text-align: left; font-weight: 700; color: var(--black); font-size: 12px; }
+    .calc-table td:nth-child(2) { text-align: left; color: var(--gray-500); }
+    .calc-table td:nth-child(3) { text-align: left; }
     .calc-table tr:last-child td { border-bottom: none; }
-    .calc-table tr.highlight { background: rgba(184,160,96,0.05); }
+    .calc-table tr.highlight td { background: rgba(184,160,96,0.04); }
+    .calc-table td.val-comp { color: var(--accent2); font-weight: 600; }
+    .calc-table td.val-best { color: #16a34a; font-weight: 700; }
     .best-badge {
       display: inline-block;
-      font-size: 10px;
+      font-size: 10.5px;
       font-weight: 700;
-      padding: 1px 6px;
-      border-radius: 4px;
+      color: #16a34a;
     }
-    .calc-table .pos { color: #16a34a; font-weight: 600; }
-    .calc-table .neg { color: #dc2626; }
+    .calc-table .iof-red  { color: #dc2626; font-weight: 600; }
+    .calc-table .iof-free { color: #16a34a; font-weight: 600; }
 
     /* ── SELIC CHIP ── */
     .selic-chip {
@@ -891,22 +987,54 @@
     </div>
     <p class="calc-sub">Simula rendimentos líquidos após IOF e IR. Valores em reais. Não considera mudança de juros no período.</p>
 
-    <!-- SELIC hidden (preenchida automaticamente) -->
+    <!-- SELIC hidden para cálculo (valor gerenciado por fetchSELIC) -->
     <input type="hidden" id="c-selic" value="14.75">
 
-    <!-- Inputs globais -->
+    <!-- Inputs: 4 dark cards com slider -->
     <div class="calc-inputs">
-      <div class="inp-group">
-        <label>Valor aplicado</label>
-        <div class="inp-prefix">
-          <span>R$</span>
-          <input type="number" id="c-valor" value="1000000" min="0" step="1000" oninput="calcular()">
+
+      <!-- Financeiro aplicado -->
+      <div class="inp-card">
+        <div class="inp-card-label">Financeiro Aplicado</div>
+        <div class="inp-card-value">
+          <span class="v-prefix">R$</span>
+          <span class="v-num" id="display-valor">1.000.000</span>
         </div>
+        <input type="range" id="c-valor" min="1000" max="3000000" step="1000" value="1000000"
+          oninput="document.getElementById('display-valor').textContent=parseInt(this.value).toLocaleString('pt-BR');sliderFill(this);calcular()">
       </div>
-      <div class="inp-group">
-        <label>Simular até (D.U.)</label>
-        <input type="number" id="c-max-du" value="30" min="1" max="252" oninput="calcular()">
+
+      <!-- SELIC (read-only) -->
+      <div class="inp-card">
+        <div class="inp-card-label">SELIC Atual</div>
+        <div class="inp-card-value">
+          <span class="v-num" id="display-selic">—</span>
+          <span class="v-unit">% a.a.</span>
+        </div>
+        <input type="range" id="c-selic-range" min="0" max="25" step="0.25" value="14.75" disabled>
       </div>
+
+      <!-- D.U./Ano (fixo) -->
+      <div class="inp-card">
+        <div class="inp-card-label">Dias Úteis / Ano</div>
+        <div class="inp-card-value">
+          <span class="v-num">252</span>
+          <span class="v-unit">d.u.</span>
+        </div>
+        <input type="range" min="252" max="252" value="252" style="--fill:100%" disabled>
+      </div>
+
+      <!-- Simulação até -->
+      <div class="inp-card">
+        <div class="inp-card-label">Simulação até</div>
+        <div class="inp-card-value">
+          <span class="v-num" id="display-maxdu">30</span>
+          <span class="v-unit">dias úteis</span>
+        </div>
+        <input type="range" id="c-max-du" min="1" max="252" step="1" value="30"
+          oninput="document.getElementById('display-maxdu').textContent=this.value;sliderFill(this);calcular()">
+      </div>
+
     </div>
 
     <!-- Produtos -->
@@ -950,13 +1078,35 @@
       <div class="sum-card compromissada"><div class="sum-label">Compromissada</div><div class="sum-value" id="s-comp">—</div><div class="sum-sub" id="s-comp-sub"></div></div>
     </div>
 
-    <!-- Seletor de dias -->
-    <div class="day-picker-wrap">
-      <div class="day-picker-inner" id="day-picker"></div>
+    <!-- Tabela de rendimento -->
+    <div class="calc-table-header">
+      <div>
+        <p class="calc-table-title">Rendimento por Prazo</p>
+        <p class="calc-table-sub">Líquido após IOF e IR — valores em reais</p>
+      </div>
+      <div class="toggle-group">
+        <button class="toggle-btn active" id="toggle-brl" onclick="setView('brl')">Líquido R$</button>
+        <button class="toggle-btn" id="toggle-cdi" onclick="setView('cdi')">% CDI equiv.</button>
+      </div>
     </div>
-
-    <p style="font-size:11px;color:var(--gray-400);margin-top:6px;line-height:1.7">
-      (1) Líquido após IOF e IR. &nbsp;(2) CDI = SELIC − 0,10% a.a. / 252 d.u. &nbsp;(3) IOF regressivo (0% a partir do 30º dia corrido). &nbsp;(4) IR 22,5%. &nbsp;(5) Não considera variação de juros.
+    <div class="calc-table-wrap">
+      <table class="calc-table">
+        <thead>
+          <tr>
+            <th>D.U.</th>
+            <th>Data</th>
+            <th>IOF</th>
+            <th id="th-cr">Conta Rem.</th>
+            <th id="th-cdb">CDB</th>
+            <th id="th-comp">Compromissada</th>
+            <th>Melhor opção</th>
+          </tr>
+        </thead>
+        <tbody id="calc-tbody"></tbody>
+      </table>
+    </div>
+    <p style="font-size:11px;color:var(--gray-400);margin-top:10px;line-height:1.7">
+      (1) Líquido após IOF e IR. &nbsp;(2) CDI = SELIC − 0,10% a.a. / 252 d.u. &nbsp;(3) IOF regressivo (0% partir do 30º dia corrido). &nbsp;(4) IR 22,5%. &nbsp;(5) Não considera variação de juros.
     </p>
   </div><!-- end tool-compromissada -->
 </div><!-- end section-tools -->
@@ -1267,7 +1417,22 @@
   const brl = (v) => v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const pct = (v) => (v * 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%';
 
-  let _allRows = [];
+  function sliderFill(el) {
+    const min = parseFloat(el.min) || 0;
+    const max = parseFloat(el.max) || 100;
+    const val = parseFloat(el.value);
+    el.style.setProperty('--fill', ((val - min) / (max - min) * 100).toFixed(1) + '%');
+  }
+
+  function initSliders() {
+    ['c-valor','c-max-du'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) sliderFill(el);
+    });
+  }
+
+  let _allRows  = [];
+  let _viewMode = 'brl'; // 'brl' | 'cdi'
 
   function calcular() {
     const valor   = parseFloat(document.getElementById('c-valor').value)    || 0;
@@ -1278,7 +1443,8 @@
     const pctCDB  = parseFloat(document.getElementById('c-cdb-pct').value)  / 100 || 0;
     const pctComp = parseFloat(document.getElementById('c-comp-pct').value) / 100 || 0;
 
-    const cdiDia = Math.pow(1 + Math.max(0, selic - 0.001), 1 / duAno) - 1;
+    const cdiDia  = Math.pow(1 + Math.max(0, selic - 0.001), 1 / duAno) - 1;
+    const cdi100  = cdiDia; // 100% CDI diário para base de comparação
 
     const today = new Date();
     today.setHours(0,0,0,0);
@@ -1294,59 +1460,84 @@
       const brutoCDB  = valor * (Math.pow(1 + cdiDia * pctCDB,  du) - 1);
       const brutoComp = valor * (Math.pow(1 + cdiDia * pctComp, du) - 1);
 
-      const aposIOFcr  = brutoCR  * (1 - iof);
-      const aposIOFcdb = brutoCDB * (1 - iof);
+      const netCR   = brutoCR   * (1 - iof) * (1 - ir);
+      const netCDB  = brutoCDB  * (1 - iof) * (1 - ir);
+      const netComp = brutoComp *             (1 - ir);
 
-      const netCR   = aposIOFcr  * (1 - ir);
-      const netCDB  = aposIOFcdb * (1 - ir);
-      const netComp = brutoComp  * (1 - ir);
+      // base CDI 100% líquida para % equiv. (sem IOF pois compara rendimento puro)
+      const cdiBase = valor * (Math.pow(1 + cdi100, du) - 1) * (1 - ir);
+      const pctEquivCR   = cdiBase > 0 ? (netCR   / cdiBase) * 100 : 0;
+      const pctEquivCDB  = cdiBase > 0 ? (netCDB  / cdiBase) * 100 : 0;
+      const pctEquivComp = cdiBase > 0 ? (netComp / cdiBase) * 100 : 0;
 
       const best = netComp >= netCDB && netComp >= netCR ? 'comp'
                  : netCDB  >= netComp && netCDB  >= netCR ? 'cdb' : 'cr';
 
-      rows.push({ du, date, calDays, iof, netCR, netCDB, netComp, best });
+      rows.push({ du, date, calDays, iof, netCR, netCDB, netComp, pctEquivCR, pctEquivCDB, pctEquivComp, best });
     }
 
     _allRows = rows;
-    renderDayPicker(rows);
-    if (rows.length > 0) selectDay(rows.length - 1);
+    renderTable();
+
+    // summary: último dia
+    const last = rows[rows.length - 1];
+    if (last) {
+      document.getElementById('s-cr').textContent   = `R$ ${brl(last.netCR)}`;
+      document.getElementById('s-cdb').textContent  = `R$ ${brl(last.netCDB)}`;
+      document.getElementById('s-comp').textContent = `R$ ${brl(last.netComp)}`;
+      const sub = `${last.du} D.U. · ${last.calDays} dias corridos`;
+      document.getElementById('s-cr-sub').textContent   = sub;
+      document.getElementById('s-cdb-sub').textContent  = sub;
+      document.getElementById('s-comp-sub').textContent = sub;
+      document.querySelectorAll('.calc-summary .sum-card').forEach(c => c.classList.remove('best'));
+      const bestIdx = last.best === 'cr' ? 0 : last.best === 'cdb' ? 1 : 2;
+      document.querySelectorAll('.calc-summary .sum-card')[bestIdx].classList.add('best');
+    }
   }
 
-  function renderDayPicker(rows) {
-    const fmt = new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: '2-digit' });
-    const picker = document.getElementById('day-picker');
-    if (!picker) return;
-    picker.innerHTML = rows.map((r, i) => {
-      const iofHtml = r.iof > 0
-        ? `<div class="day-iof" style="color:#dc2626">IOF ${(r.iof * 100).toFixed(0)}%</div>`
-        : `<div class="day-iof" style="color:#16a34a">Isento</div>`;
-      return `<button class="day-btn" onclick="selectDay(${i})" id="day-btn-${i}">
-        <div class="day-du">D${r.du}</div>
-        <div class="day-date">${fmt.format(r.date)}</div>
-        ${iofHtml}
-      </button>`;
+  function setView(mode) {
+    _viewMode = mode;
+    document.getElementById('toggle-brl').classList.toggle('active', mode === 'brl');
+    document.getElementById('toggle-cdi').classList.toggle('active', mode === 'cdi');
+    renderTable();
+  }
+
+  function renderTable() {
+    const fmt = new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit' });
+    const isCDI = _viewMode === 'cdi';
+    const tbody = document.getElementById('calc-tbody');
+    if (!tbody) return;
+
+    tbody.innerHTML = _allRows.map(r => {
+      const iofCell = r.iof > 0
+        ? `<span class="iof-red">${(r.iof * 100).toFixed(0)}%</span>`
+        : `<span class="iof-free">—</span>`;
+
+      let crVal, cdbVal, compVal;
+      if (isCDI) {
+        crVal   = `${r.pctEquivCR.toFixed(1)}%`;
+        cdbVal  = `${r.pctEquivCDB.toFixed(1)}%`;
+        compVal = `${r.pctEquivComp.toFixed(1)}%`;
+      } else {
+        crVal   = `R$ ${brl(r.netCR)}`;
+        cdbVal  = `R$ ${brl(r.netCDB)}`;
+        compVal = `R$ ${brl(r.netComp)}`;
+      }
+
+      const bestLabel = r.best === 'comp' ? 'Compromissada'
+                      : r.best === 'cdb'  ? 'CDB'
+                      : 'Conta Rem.';
+
+      return `<tr${r.best === 'comp' ? ' class="highlight"' : ''}>
+        <td>D+${r.du}</td>
+        <td>${fmt.format(r.date)}</td>
+        <td>${iofCell}</td>
+        <td>${crVal}</td>
+        <td>${cdbVal}</td>
+        <td class="val-comp">${compVal}</td>
+        <td><span class="best-badge">${bestLabel}</span></td>
+      </tr>`;
     }).join('');
-  }
-
-  function selectDay(idx) {
-    const r = _allRows[idx];
-    if (!r) return;
-
-    document.querySelectorAll('.day-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
-    const btn = document.getElementById(`day-btn-${idx}`);
-    if (btn) btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-
-    document.getElementById('s-cr').textContent    = `R$ ${brl(r.netCR)}`;
-    document.getElementById('s-cdb').textContent   = `R$ ${brl(r.netCDB)}`;
-    document.getElementById('s-comp').textContent  = `R$ ${brl(r.netComp)}`;
-    const sub = `${r.du} D.U. · ${r.calDays} dias corridos`;
-    document.getElementById('s-cr-sub').textContent   = sub;
-    document.getElementById('s-cdb-sub').textContent  = sub;
-    document.getElementById('s-comp-sub').textContent = sub;
-
-    document.querySelectorAll('.calc-summary .sum-card').forEach(c => c.classList.remove('best'));
-    const bestIdx = r.best === 'cr' ? 0 : r.best === 'cdb' ? 1 : 2;
-    document.querySelectorAll('.calc-summary .sum-card')[bestIdx].classList.add('best');
   }
 
   /* ── Tab switch ── */
@@ -1368,26 +1559,36 @@
 
   /* ── Busca SELIC do BCB ── */
   async function fetchSELIC() {
-    const statusEl = document.getElementById('selic-status');
-    const chipEl   = document.getElementById('selic-chip');
-    const selicEl  = document.getElementById('c-selic');
-    if (!statusEl || !selicEl) return;
-    statusEl.textContent = 'Buscando SELIC...';
+    const statusEl  = document.getElementById('selic-status');
+    const chipEl    = document.getElementById('selic-chip');
+    const selicEl   = document.getElementById('c-selic');
+    const displayEl = document.getElementById('display-selic');
+    const rangeEl   = document.getElementById('c-selic-range');
+    if (!selicEl) return;
+    if (statusEl) statusEl.textContent = 'Buscando SELIC...';
     try {
       const res  = await fetch('https://api.bcb.gov.br/dados/serie/bcdata.sgs.432/dados/ultimos/1?formato=json');
       const data = await res.json();
       const selic = parseFloat(data[0].valor.replace(',', '.'));
       selicEl.value = selic;
-      statusEl.textContent = `SELIC ${selic.toFixed(2).replace('.', ',')}% a.a.`;
+      if (displayEl) displayEl.textContent = selic.toFixed(2).replace('.', ',');
+      if (rangeEl) {
+        rangeEl.value = selic;
+        sliderFill(rangeEl);
+      }
+      if (statusEl) statusEl.textContent = `SELIC ${selic.toFixed(2).replace('.', ',')}% a.a.`;
       if (chipEl) chipEl.style.borderColor = '#bbf7d0';
       calcular();
     } catch {
-      statusEl.textContent = 'SELIC indisponível';
+      if (displayEl) displayEl.textContent = '—';
+      if (statusEl) statusEl.textContent = 'SELIC indisponível';
       if (chipEl) { chipEl.style.borderColor = '#fecaca'; chipEl.querySelector('.dot').style.background = '#dc2626'; }
+      calcular();
     }
   }
 
-  // Inicializa calculadora e busca SELIC
+  // Inicializa sliders e busca SELIC (que chama calcular() ao final)
+  initSliders();
   fetchSELIC();
 </script>
 </body>
