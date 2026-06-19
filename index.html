@@ -558,7 +558,7 @@
       content: '';
       width: 6px; height: 6px;
       border-radius: 50%;
-      background: var(--accent);
+      background: var(--dot-clr, var(--accent));
       flex-shrink: 0;
     }
     .inp-card-value {
@@ -686,6 +686,11 @@
     .badge-green { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
     .badge-red   { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
     .badge-gray  { background: var(--gray-100); color: var(--gray-500); border: 1px solid var(--gray-200); }
+    /* dark card badges */
+    .badge-dk-green { background: rgba(22,163,74,0.14); color: #4ade80; border: 1px solid rgba(22,163,74,0.28); }
+    .badge-dk-red   { background: rgba(220,38,38,0.14); color: #f87171; border: 1px solid rgba(220,38,38,0.28); }
+    .badge-dk-gray  { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.42); border: 1px solid rgba(255,255,255,0.1); }
+    .prod-badges    { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
 
     /* result summary */
     .calc-summary {
@@ -1039,36 +1044,52 @@
 
     <!-- Produtos -->
     <div class="calc-products">
-      <div class="prod-card conta-rem">
-        <div class="prod-name">Conta Remunerada</div>
-        <div class="prod-inst">Banco</div>
-        <div class="prod-field">
-          <input type="number" id="c-cr-pct" value="10" min="0" max="200" step="5" oninput="calcular()">
-          <span>% do CDI</span>
+
+      <!-- Conta Remunerada: travada em 10% CDI -->
+      <div class="inp-card">
+        <div class="inp-card-label" style="--dot-clr:#6b7280">Conta Remunerada · Banco</div>
+        <div class="inp-card-value">
+          <span class="v-num">10</span>
+          <span class="v-unit">% do CDI</span>
         </div>
-        <span class="prod-badge badge-red">Incide IOF</span>
-        <span class="prod-badge badge-gray" style="margin-left:4px">IR 22,5%</span>
-      </div>
-      <div class="prod-card cdb">
-        <div class="prod-name">CDB</div>
-        <div class="prod-inst">XP</div>
-        <div class="prod-field">
-          <input type="number" id="c-cdb-pct" value="100" min="0" max="200" step="5" oninput="calcular()">
-          <span>% do CDI</span>
+        <input type="hidden" id="c-cr-pct" value="10">
+        <input type="range" min="0" max="100" value="10" style="--fill:10%" disabled>
+        <div class="prod-badges">
+          <span class="prod-badge badge-dk-red">Incide IOF</span>
+          <span class="prod-badge badge-dk-gray">IR 22,5%</span>
         </div>
-        <span class="prod-badge badge-red">Incide IOF</span>
-        <span class="prod-badge badge-gray" style="margin-left:4px">IR 22,5%</span>
       </div>
-      <div class="prod-card compromissada">
-        <div class="prod-name">Compromissada</div>
-        <div class="prod-inst">XP · Isenta IOF</div>
-        <div class="prod-field">
-          <input type="number" id="c-comp-pct" value="100" min="0" max="200" step="5" oninput="calcular()">
-          <span>% do CDI</span>
+
+      <!-- CDB: travado em 100% CDI -->
+      <div class="inp-card">
+        <div class="inp-card-label" style="--dot-clr:#3b82f6">CDB · XP</div>
+        <div class="inp-card-value">
+          <span class="v-num">100</span>
+          <span class="v-unit">% do CDI</span>
         </div>
-        <span class="prod-badge badge-green">Isenta de IOF</span>
-        <span class="prod-badge badge-gray" style="margin-left:4px">IR 22,5%</span>
+        <input type="hidden" id="c-cdb-pct" value="100">
+        <input type="range" min="0" max="100" value="100" style="--fill:100%" disabled>
+        <div class="prod-badges">
+          <span class="prod-badge badge-dk-red">Incide IOF</span>
+          <span class="prod-badge badge-dk-gray">IR 22,5%</span>
+        </div>
       </div>
+
+      <!-- Compromissada: slider editável de 5 em 5% -->
+      <div class="inp-card">
+        <div class="inp-card-label">Compromissada · XP · Isenta IOF</div>
+        <div class="inp-card-value">
+          <span class="v-num" id="display-comp-pct">100</span>
+          <span class="v-unit">% do CDI</span>
+        </div>
+        <input type="range" id="c-comp-pct" min="50" max="150" step="5" value="100"
+          oninput="document.getElementById('display-comp-pct').textContent=this.value;sliderFill(this);calcular()">
+        <div class="prod-badges">
+          <span class="prod-badge badge-dk-green">Isenta de IOF</span>
+          <span class="prod-badge badge-dk-gray">IR 22,5%</span>
+        </div>
+      </div>
+
     </div>
 
     <!-- Resumo no prazo selecionado -->
@@ -1425,7 +1446,7 @@
   }
 
   function initSliders() {
-    ['c-valor','c-max-du'].forEach(id => {
+    ['c-valor','c-max-du','c-comp-pct'].forEach(id => {
       const el = document.getElementById(id);
       if (el) sliderFill(el);
     });
