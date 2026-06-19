@@ -702,6 +702,62 @@
     .calc-table .pos { color: #16a34a; font-weight: 600; }
     .calc-table .neg { color: #dc2626; }
 
+    /* ── SELIC CHIP ── */
+    .selic-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px 3px 8px;
+      border-radius: 20px;
+      background: var(--gray-100);
+      border: 1px solid var(--gray-200);
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--gray-500);
+    }
+    .selic-chip .dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #16a34a;
+      flex-shrink: 0;
+    }
+
+    /* ── DAY PICKER ── */
+    .day-picker-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      margin-top: 8px;
+    }
+    .day-picker-wrap::-webkit-scrollbar { display: none; }
+    .day-picker-inner {
+      display: flex;
+      gap: 6px;
+      padding: 4px 2px 10px;
+      width: max-content;
+    }
+    .day-btn {
+      flex-shrink: 0;
+      width: 64px;
+      padding: 8px 6px 6px;
+      border-radius: 8px;
+      border: 1px solid var(--gray-200);
+      background: var(--white);
+      cursor: pointer;
+      text-align: center;
+      line-height: 1.3;
+      transition: border-color 0.12s, background 0.12s;
+    }
+    .day-btn .day-du   { font-weight: 700; font-size: 12px; color: var(--black); }
+    .day-btn .day-date { font-size: 10px; color: var(--gray-400); margin-top: 1px; }
+    .day-btn .day-iof  { font-size: 9.5px; margin-top: 3px; font-weight: 600; }
+    .day-btn:hover { border-color: var(--gray-400); }
+    .day-btn.active {
+      border-color: var(--accent);
+      background: rgba(184,160,96,0.07);
+    }
+    .day-btn.active .day-du { color: var(--accent2); }
+
     /* ── TOOL NAV ── */
     .tool-nav-btn {
       padding: 11px 16px;
@@ -826,11 +882,17 @@
 
   <!-- ── CALCULADORA COMPROMISSADA ── -->
   <div id="tool-compromissada" class="calc-wrap">
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px;">
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px;">
       <p class="calc-title" style="margin:0">Calculadora Compromissada</p>
-      <span id="selic-status" style="font-size:11px;color:var(--gray-400);">Buscando SELIC...</span>
+      <span class="selic-chip" id="selic-chip">
+        <span class="dot"></span>
+        <span id="selic-status">Buscando SELIC...</span>
+      </span>
     </div>
     <p class="calc-sub">Simula rendimentos líquidos após IOF e IR. Valores em reais. Não considera mudança de juros no período.</p>
+
+    <!-- SELIC hidden (preenchida automaticamente) -->
+    <input type="hidden" id="c-selic" value="14.75">
 
     <!-- Inputs globais -->
     <div class="calc-inputs">
@@ -840,10 +902,6 @@
           <span>R$</span>
           <input type="number" id="c-valor" value="1000000" min="0" step="1000" oninput="calcular()">
         </div>
-      </div>
-      <div class="inp-group">
-        <label>SELIC (% a.a.)</label>
-        <input type="number" id="c-selic" value="14.75" step="0.25" min="0" max="50" oninput="calcular()">
       </div>
       <div class="inp-group">
         <label>Simular até (D.U.)</label>
@@ -892,26 +950,13 @@
       <div class="sum-card compromissada"><div class="sum-label">Compromissada</div><div class="sum-value" id="s-comp">—</div><div class="sum-sub" id="s-comp-sub"></div></div>
     </div>
 
-    <!-- Tabela -->
-    <div class="calc-table-wrap">
-      <table class="calc-table">
-        <thead>
-          <tr>
-            <th>D.U.</th>
-            <th>Data</th>
-            <th>IOF</th>
-            <th>Conta Rem. líq.</th>
-            <th>CDB líq.</th>
-            <th>Compromissada líq.</th>
-            <th>Melhor opção</th>
-          </tr>
-        </thead>
-        <tbody id="calc-tbody"></tbody>
-      </table>
+    <!-- Seletor de dias -->
+    <div class="day-picker-wrap">
+      <div class="day-picker-inner" id="day-picker"></div>
     </div>
 
-    <p style="font-size:11px;color:var(--gray-400);margin-top:14px;line-height:1.7">
-      (1) Valores em reais líquidos após IOF e IR. &nbsp;(2) CDI diário = SELIC − 0,10% a.a. convertida para taxa diária (252 d.u.). &nbsp;(3) IOF regressivo por dias corridos (0% a partir do 30º dia). &nbsp;(4) IR 22,5% sobre rendimento líquido de IOF. &nbsp;(5) Não considera variação de juros no período.
+    <p style="font-size:11px;color:var(--gray-400);margin-top:6px;line-height:1.7">
+      (1) Líquido após IOF e IR. &nbsp;(2) CDI = SELIC − 0,10% a.a. / 252 d.u. &nbsp;(3) IOF regressivo (0% a partir do 30º dia corrido). &nbsp;(4) IR 22,5%. &nbsp;(5) Não considera variação de juros.
     </p>
   </div><!-- end tool-compromissada -->
 </div><!-- end section-tools -->
@@ -1222,21 +1267,21 @@
   const brl = (v) => v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const pct = (v) => (v * 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%';
 
-  function calcular() {
-    const valor    = parseFloat(document.getElementById('c-valor').value)   || 0;
-    const selic    = parseFloat(document.getElementById('c-selic').value)   / 100 || 0;
-    const duAno    = 252;
-    const maxDU    = parseInt(document.getElementById('c-max-du').value)    || 30;
-    const pctCR    = parseFloat(document.getElementById('c-cr-pct').value)  / 100 || 0;
-    const pctCDB   = parseFloat(document.getElementById('c-cdb-pct').value) / 100 || 0;
-    const pctComp  = parseFloat(document.getElementById('c-comp-pct').value)/ 100 || 0;
+  let _allRows = [];
 
-    // CDI diário: SELIC - 10bps convertida para taxa diária
+  function calcular() {
+    const valor   = parseFloat(document.getElementById('c-valor').value)    || 0;
+    const selic   = parseFloat(document.getElementById('c-selic').value)    / 100 || 0;
+    const duAno   = 252;
+    const maxDU   = parseInt(document.getElementById('c-max-du').value)     || 30;
+    const pctCR   = parseFloat(document.getElementById('c-cr-pct').value)   / 100 || 0;
+    const pctCDB  = parseFloat(document.getElementById('c-cdb-pct').value)  / 100 || 0;
+    const pctComp = parseFloat(document.getElementById('c-comp-pct').value) / 100 || 0;
+
     const cdiDia = Math.pow(1 + Math.max(0, selic - 0.001), 1 / duAno) - 1;
 
     const today = new Date();
     today.setHours(0,0,0,0);
-    // avança para próximo dia útil se hoje for fim de semana
     while (today.getDay() === 0 || today.getDay() === 6) today.setDate(today.getDate() + 1);
 
     const rows = [];
@@ -1245,61 +1290,63 @@
       const iof = getIOF(calDays);
       const ir  = getIR(calDays);
 
-      // Rendimento bruto acumulado (juros compostos por d.u.)
       const brutoCR   = valor * (Math.pow(1 + cdiDia * pctCR,   du) - 1);
       const brutoCDB  = valor * (Math.pow(1 + cdiDia * pctCDB,  du) - 1);
       const brutoComp = valor * (Math.pow(1 + cdiDia * pctComp, du) - 1);
 
-      // Aplicar IOF (conta rem e CDB têm IOF; compromissada isenta)
       const aposIOFcr  = brutoCR  * (1 - iof);
       const aposIOFcdb = brutoCDB * (1 - iof);
 
-      // Aplicar IR
       const netCR   = aposIOFcr  * (1 - ir);
       const netCDB  = aposIOFcdb * (1 - ir);
       const netComp = brutoComp  * (1 - ir);
 
       const best = netComp >= netCDB && netComp >= netCR ? 'comp'
-                 : netCDB  >= netComp && netCDB  >= netCR  ? 'cdb' : 'cr';
+                 : netCDB  >= netComp && netCDB  >= netCR ? 'cdb' : 'cr';
 
       rows.push({ du, date, calDays, iof, netCR, netCDB, netComp, best });
     }
 
-    // Preenche tabela
+    _allRows = rows;
+    renderDayPicker(rows);
+    if (rows.length > 0) selectDay(rows.length - 1);
+  }
+
+  function renderDayPicker(rows) {
     const fmt = new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: '2-digit' });
-    const tbody = document.getElementById('calc-tbody');
-    tbody.innerHTML = rows.map(r => {
-      const bestLabel = r.best === 'comp' ? `<span class="best-badge badge-green">Compromissada</span>`
-                       : r.best === 'cdb' ? `<span class="best-badge badge-gray">CDB</span>`
-                       : `<span class="best-badge badge-gray">Conta Rem.</span>`;
-      const iofPct = r.iof > 0 ? `<span class="neg">${(r.iof*100).toFixed(0)}%</span>` : `<span class="pos">0%</span>`;
-      return `<tr${r.best==='comp'?' class="highlight"':''}>
-        <td>${r.du}</td>
-        <td>${fmt.format(r.date)}</td>
-        <td>${iofPct}</td>
-        <td>R$ ${brl(r.netCR)}</td>
-        <td>R$ ${brl(r.netCDB)}</td>
-        <td><strong>R$ ${brl(r.netComp)}</strong></td>
-        <td>${bestLabel}</td>
-      </tr>`;
+    const picker = document.getElementById('day-picker');
+    if (!picker) return;
+    picker.innerHTML = rows.map((r, i) => {
+      const iofHtml = r.iof > 0
+        ? `<div class="day-iof" style="color:#dc2626">IOF ${(r.iof * 100).toFixed(0)}%</div>`
+        : `<div class="day-iof" style="color:#16a34a">Isento</div>`;
+      return `<button class="day-btn" onclick="selectDay(${i})" id="day-btn-${i}">
+        <div class="day-du">D${r.du}</div>
+        <div class="day-date">${fmt.format(r.date)}</div>
+        ${iofHtml}
+      </button>`;
     }).join('');
+  }
 
-    // Resumo no último período
-    const last = rows[rows.length - 1];
-    if (last) {
-      const du = last.du;
-      document.getElementById('s-cr').textContent   = `R$ ${brl(last.netCR)}`;
-      document.getElementById('s-cdb').textContent  = `R$ ${brl(last.netCDB)}`;
-      document.getElementById('s-comp').textContent = `R$ ${brl(last.netComp)}`;
-      document.getElementById('s-cr-sub').textContent  = `em ${du} D.U.`;
-      document.getElementById('s-cdb-sub').textContent = `em ${du} D.U.`;
-      document.getElementById('s-comp-sub').textContent= `em ${du} D.U.`;
+  function selectDay(idx) {
+    const r = _allRows[idx];
+    if (!r) return;
 
-      // destaca melhor
-      document.querySelectorAll('.calc-summary .sum-card').forEach(c => c.classList.remove('best'));
-      const idx = last.best === 'cr' ? 0 : last.best === 'cdb' ? 1 : 2;
-      document.querySelectorAll('.calc-summary .sum-card')[idx].classList.add('best');
-    }
+    document.querySelectorAll('.day-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
+    const btn = document.getElementById(`day-btn-${idx}`);
+    if (btn) btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+
+    document.getElementById('s-cr').textContent    = `R$ ${brl(r.netCR)}`;
+    document.getElementById('s-cdb').textContent   = `R$ ${brl(r.netCDB)}`;
+    document.getElementById('s-comp').textContent  = `R$ ${brl(r.netComp)}`;
+    const sub = `${r.du} D.U. · ${r.calDays} dias corridos`;
+    document.getElementById('s-cr-sub').textContent   = sub;
+    document.getElementById('s-cdb-sub').textContent  = sub;
+    document.getElementById('s-comp-sub').textContent = sub;
+
+    document.querySelectorAll('.calc-summary .sum-card').forEach(c => c.classList.remove('best'));
+    const bestIdx = r.best === 'cr' ? 0 : r.best === 'cdb' ? 1 : 2;
+    document.querySelectorAll('.calc-summary .sum-card')[bestIdx].classList.add('best');
   }
 
   /* ── Tab switch ── */
@@ -1322,6 +1369,7 @@
   /* ── Busca SELIC do BCB ── */
   async function fetchSELIC() {
     const statusEl = document.getElementById('selic-status');
+    const chipEl   = document.getElementById('selic-chip');
     const selicEl  = document.getElementById('c-selic');
     if (!statusEl || !selicEl) return;
     statusEl.textContent = 'Buscando SELIC...';
@@ -1330,12 +1378,12 @@
       const data = await res.json();
       const selic = parseFloat(data[0].valor.replace(',', '.'));
       selicEl.value = selic;
-      statusEl.textContent = `SELIC: ${selic.toFixed(2).replace('.', ',')}% a.a. (BCB)`;
-      statusEl.style.color = 'var(--gray-400)';
+      statusEl.textContent = `SELIC ${selic.toFixed(2).replace('.', ',')}% a.a.`;
+      if (chipEl) chipEl.style.borderColor = '#bbf7d0';
       calcular();
     } catch {
-      statusEl.textContent = 'SELIC não obtida — insira manualmente';
-      statusEl.style.color = '#e55';
+      statusEl.textContent = 'SELIC indisponível';
+      if (chipEl) { chipEl.style.borderColor = '#fecaca'; chipEl.querySelector('.dot').style.background = '#dc2626'; }
     }
   }
 
