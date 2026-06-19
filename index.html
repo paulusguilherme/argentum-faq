@@ -1573,7 +1573,10 @@
     document.getElementById('section-tools').style.display = tab === 'tools' ? 'block' : 'none';
     document.querySelectorAll('.tab-btn').forEach((b, i) =>
       b.classList.toggle('active', (i === 0) === (tab === 'faq')));
-    if (tab === 'tools') { fetchSELIC(); }
+    if (tab === 'tools') {
+      if (_allRows.length === 0) calcular(); // garante dados imediatos
+      fetchSELIC(); // atualiza SELIC real
+    }
   }
 
   /* ── Tool sub-nav ── */
@@ -1614,9 +1617,10 @@
     }
   }
 
-  // Inicializa sliders e busca SELIC (que chama calcular() ao final)
+  // Inicializa sliders, renderiza tabela com defaults e busca SELIC em paralelo
   initSliders();
-  fetchSELIC();
+  calcular(); // tabela aparece imediatamente com valores padrão
+  fetchSELIC(); // atualiza com SELIC real quando a API responder
 </script>
 </body>
 </html>
