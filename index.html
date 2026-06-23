@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+  <!-- Aplica tema antes do render para evitar flash -->
+  <script>
+    (function(){
+      var t = localStorage.getItem('faq-theme') || 'light';
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FAQ · Argentum Investimentos</title>
@@ -416,6 +423,142 @@
     }
     .empty svg { margin-bottom: 12px; opacity: 0.25; }
     .empty p { font-size: 14px; }
+
+    /* ── THEME TOGGLE ── */
+    .theme-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: transparent;
+      color: rgba(255,255,255,0.5);
+      cursor: pointer;
+      transition: all 0.15s;
+      margin-left: 8px;
+      flex-shrink: 0;
+    }
+    .theme-toggle:hover {
+      background: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.85);
+      border-color: rgba(255,255,255,0.18);
+    }
+
+    /* ══════════════════════════════════════════
+       DARK MODE OVERRIDES
+    ══════════════════════════════════════════ */
+    html[data-theme="dark"] body {
+      background: #060d1f;
+      color: rgba(255,255,255,0.7);
+    }
+    html[data-theme="dark"] .tab-bar {
+      background: #081530;
+      border-color: rgba(255,255,255,0.07);
+    }
+    html[data-theme="dark"] .tab-btn {
+      color: rgba(255,255,255,0.4);
+    }
+    html[data-theme="dark"] .tab-btn.active {
+      color: #fff;
+      border-bottom-color: var(--accent);
+    }
+    html[data-theme="dark"] .tool-nav-btn {
+      color: rgba(255,255,255,0.4);
+    }
+    html[data-theme="dark"] .tool-nav-btn.active {
+      color: #fff;
+      border-bottom-color: var(--accent);
+    }
+    html[data-theme="dark"] .filters-row {
+      background: #060d1f;
+      border-bottom-color: rgba(255,255,255,0.06);
+    }
+    html[data-theme="dark"] .filter-label {
+      color: rgba(255,255,255,0.35);
+    }
+    html[data-theme="dark"] .pill {
+      background: rgba(255,255,255,0.06);
+      color: rgba(255,255,255,0.45);
+      border-color: rgba(255,255,255,0.08);
+    }
+    html[data-theme="dark"] .pill.active {
+      background: var(--accent);
+      color: #060d1f;
+      border-color: var(--accent);
+    }
+    html[data-theme="dark"] .toolbar {
+      background: #060d1f;
+      border-bottom-color: rgba(255,255,255,0.06);
+    }
+    html[data-theme="dark"] .stats,
+    html[data-theme="dark"] .stats strong {
+      color: rgba(255,255,255,0.35);
+    }
+    html[data-theme="dark"] .card {
+      background: #0d1b3e;
+      border-color: rgba(255,255,255,0.07);
+    }
+    html[data-theme="dark"] .card:hover,
+    html[data-theme="dark"] .card.open {
+      border-color: rgba(255,255,255,0.15);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.35);
+    }
+    html[data-theme="dark"] .card-title {
+      color: #fff;
+    }
+    html[data-theme="dark"] .card-chevron {
+      color: rgba(255,255,255,0.2);
+    }
+    html[data-theme="dark"] .tag-cat {
+      background: rgba(255,255,255,0.06);
+      color: rgba(255,255,255,0.4);
+      border-color: rgba(255,255,255,0.08);
+    }
+    html[data-theme="dark"] .tag-aud {
+      color: rgba(255,255,255,0.3);
+      border-color: rgba(255,255,255,0.08);
+    }
+    html[data-theme="dark"] .copy-btn {
+      color: rgba(255,255,255,0.2);
+    }
+    html[data-theme="dark"] .copy-btn:hover {
+      background: rgba(255,255,255,0.06);
+      color: rgba(255,255,255,0.65);
+    }
+    html[data-theme="dark"] .card-body {
+      border-top-color: rgba(255,255,255,0.06);
+    }
+    html[data-theme="dark"] .card-content {
+      color: rgba(255,255,255,0.6);
+    }
+    html[data-theme="dark"] .card-content strong {
+      color: rgba(255,255,255,0.85);
+    }
+    html[data-theme="dark"] .card-content a {
+      color: var(--accent);
+    }
+    html[data-theme="dark"] .skeleton {
+      background: #0d1b3e;
+      border-color: rgba(255,255,255,0.06);
+    }
+    html[data-theme="dark"] .sk-block {
+      background: linear-gradient(90deg, #0d1b3e 25%, #152240 50%, #0d1b3e 75%);
+    }
+    html[data-theme="dark"] .empty {
+      color: rgba(255,255,255,0.25);
+    }
+    html[data-theme="dark"] .badge-novo {
+      background: rgba(22,163,74,0.15);
+      color: #4ade80;
+      border-color: rgba(22,163,74,0.25);
+    }
+    /* tool nav bar fundo no dark */
+    html[data-theme="dark"] #section-tools > div:first-child {
+      background: #081530 !important;
+      border-bottom-color: rgba(255,255,255,0.07) !important;
+    }
 
     /* ── CATEGORY COLORS (dots) ── */
     .dot-cartao       { background: #d97706; }
@@ -935,6 +1078,19 @@
         Materiais
       </a>
       <span class="header-count" id="total-badge">—</span>
+      <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Alternar tema claro/escuro">
+        <!-- sol (visível no modo escuro) -->
+        <svg id="icon-sun" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none">
+          <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+          <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </svg>
+        <!-- lua (visível no modo claro) -->
+        <svg id="icon-moon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
     </nav>
   </div>
 </header>
@@ -969,9 +1125,12 @@
     </button>
     <button class="tab-btn" onclick="switchTab('tools')">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+        <rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/>
+        <line x1="8" y1="10" x2="10" y2="10"/><line x1="14" y1="10" x2="16" y2="10"/>
+        <line x1="8" y1="14" x2="10" y2="14"/><line x1="14" y1="14" x2="16" y2="14"/>
+        <line x1="8" y1="18" x2="10" y2="18"/><line x1="14" y1="18" x2="16" y2="18"/>
       </svg>
-      Ferramentas
+      Compromissadas
     </button>
   </div>
 </div>
@@ -1599,6 +1758,25 @@
       calcular();
     }
   }
+
+  /* ── Tema claro / escuro ── */
+  function toggleTheme() {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const next   = isDark ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('faq-theme', next);
+    document.getElementById('icon-sun').style.display  = next === 'dark'  ? 'block' : 'none';
+    document.getElementById('icon-moon').style.display = next === 'light' ? 'block' : 'none';
+  }
+
+  // Sincroniza ícone com tema atual ao carregar
+  (function() {
+    const t = document.documentElement.getAttribute('data-theme') || 'light';
+    const sun  = document.getElementById('icon-sun');
+    const moon = document.getElementById('icon-moon');
+    if (sun)  sun.style.display  = t === 'dark'  ? 'block' : 'none';
+    if (moon) moon.style.display = t === 'light' ? 'block' : 'none';
+  })();
 
   // Inicializa sliders, renderiza tabela com defaults e busca SELIC em paralelo
   initSliders();
