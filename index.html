@@ -555,7 +555,7 @@
       border-color: rgba(22,163,74,0.25);
     }
     /* tool nav bar fundo no dark */
-    html[data-theme="dark"] #section-tools > div:first-child {
+    html[data-theme="dark"] #section-ferramentas > div:first-child {
       background: #081530 !important;
       border-bottom-color: rgba(255,255,255,0.07) !important;
     }
@@ -653,8 +653,9 @@
     .tab-btn.active svg { opacity: 1; }
 
     /* ── CALCULATOR ── */
-    #section-tools { display: none; }
-    #section-faq   { display: block; }
+    #section-tools       { display: none; }
+    #section-ferramentas { display: none; }
+    #section-faq         { display: block; }
 
     .calc-wrap {
       max-width: 1140px;
@@ -766,6 +767,7 @@
     }
     @media (max-width: 768px) {
       .calc-inputs { grid-template-columns: repeat(2, 1fr); }
+      #comp-products { grid-template-columns: repeat(2, 1fr) !important; }
     }
 
     /* product cards */
@@ -1008,6 +1010,29 @@
     }
     .day-btn.active .day-du { color: var(--accent2); }
 
+    /* ── COMPARADOR RF ── */
+    .comp-prod-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      gap: 6px;
+    }
+    .comp-tax-badge {
+      font-size: 8px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      padding: 2px 7px;
+      border-radius: 10px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .tax-isento { background: rgba(22,163,74,0.15); color: #4ade80; border: 1px solid rgba(22,163,74,0.28); }
+    .tax-ir     { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.35); border: 1px solid rgba(255,255,255,0.1); }
+    .comp-prod-auto { font-size: 10.5px; color: rgba(255,255,255,0.25); margin-top: 4px; font-style: italic; }
+
     /* ── TOOL NAV ── */
     .tool-nav-btn {
       padding: 11px 16px;
@@ -1117,13 +1142,13 @@
 <!-- ── TABS ── -->
 <div class="tab-bar">
   <div class="tab-bar-inner">
-    <button class="tab-btn active" onclick="switchTab('faq')">
+    <button class="tab-btn active" data-tab="faq" onclick="switchTab('faq')">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
       </svg>
       Artigos
     </button>
-    <button class="tab-btn" onclick="switchTab('tools')">
+    <button class="tab-btn" data-tab="tools" onclick="switchTab('tools')">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/>
         <line x1="8" y1="10" x2="10" y2="10"/><line x1="14" y1="10" x2="16" y2="10"/>
@@ -1132,19 +1157,18 @@
       </svg>
       Compromissadas
     </button>
+    <button class="tab-btn" data-tab="ferramentas" onclick="switchTab('ferramentas')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/>
+        <line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/>
+      </svg>
+      Ferramentas
+    </button>
   </div>
 </div>
 
-<!-- ── TOOLS SECTION ── -->
+<!-- ── COMPROMISSADAS SECTION ── -->
 <div id="section-tools">
-  <div style="background:var(--white);border-bottom:1px solid var(--gray-200);">
-    <div style="max-width:1140px;margin:0 auto;padding:0 32px;display:flex;gap:4px;overflow-x:auto;">
-      <button class="tool-nav-btn active" onclick="switchTool('compromissada')" id="tnav-compromissada">
-        Calc. Compromissada
-      </button>
-      <!-- futuras ferramentas aqui -->
-    </div>
-  </div>
 
   <!-- ── CALCULADORA COMPROMISSADA ── -->
   <div id="tool-compromissada" class="calc-wrap">
@@ -1297,7 +1321,108 @@
       (1) Líquido após IOF e IR. &nbsp;(2) CDI = SELIC − 0,10% a.a. / 252 d.u. &nbsp;(3) IOF regressivo (0% partir do 30º dia corrido). &nbsp;(4) IR 22,5%. &nbsp;(5) Não considera variação de juros.
     </p>
   </div><!-- end tool-compromissada -->
+
 </div><!-- end section-tools -->
+
+<!-- ── FERRAMENTAS SECTION ── -->
+<div id="section-ferramentas">
+  <div style="background:var(--white);border-bottom:1px solid var(--gray-200);">
+    <div style="max-width:1140px;margin:0 auto;padding:0 32px;display:flex;gap:4px;overflow-x:auto;">
+      <button class="tool-nav-btn active" onclick="switchTool('comparador')" id="tnav-comparador">
+        Comparador RF
+      </button>
+      <!-- futuras ferramentas aqui -->
+    </div>
+  </div>
+
+  <!-- ── COMPARADOR DE RENDA FIXA ── -->
+  <div id="tool-comparador" class="calc-wrap">
+    <p class="calc-title">Comparador de Renda Fixa</p>
+    <p class="calc-sub">Rendimento líquido após IR, com equivalência em % CDI. Inputs manuais — use como referência de posicionamento.</p>
+
+    <!-- Global inputs: 4 dark cards -->
+    <div class="calc-inputs">
+
+      <!-- Valor investido -->
+      <div class="inp-card">
+        <div class="inp-card-label">Valor Investido</div>
+        <div class="inp-card-value">
+          <span class="v-prefix">R$</span>
+          <span class="v-num" id="disp-comp-valor">100.000</span>
+        </div>
+        <input type="range" id="comp-valor" min="1000" max="3000000" step="1000" value="100000"
+          oninput="document.getElementById('disp-comp-valor').textContent=parseInt(this.value).toLocaleString('pt-BR');sliderFill(this);calcComparador()">
+      </div>
+
+      <!-- Prazo em meses -->
+      <div class="inp-card">
+        <div class="inp-card-label">Prazo</div>
+        <div class="inp-card-value">
+          <span class="v-num" id="disp-comp-prazo">12</span>
+          <span class="v-unit">meses</span>
+        </div>
+        <input type="range" id="comp-prazo" min="1" max="120" step="1" value="12"
+          oninput="document.getElementById('disp-comp-prazo').textContent=this.value;sliderFill(this);calcComparador()">
+      </div>
+
+      <!-- CDI / SELIC (auto-fetched, read-only) -->
+      <div class="inp-card">
+        <div class="inp-card-label">CDI / SELIC</div>
+        <div class="inp-card-value">
+          <span class="v-num" id="disp-comp-cdi">—</span>
+          <span class="v-unit">% a.a.</span>
+        </div>
+        <input type="range" id="comp-cdi-range" min="0" max="25" step="0.25" value="14.75" disabled>
+      </div>
+
+      <!-- IPCA estimado -->
+      <div class="inp-card">
+        <div class="inp-card-label" style="--dot-clr:#ea580c">IPCA Estimado</div>
+        <div class="inp-card-value">
+          <span class="v-num" id="disp-comp-ipca">5,00</span>
+          <span class="v-unit">% a.a.</span>
+        </div>
+        <input type="range" id="comp-ipca" min="1" max="20" step="0.25" value="5"
+          oninput="document.getElementById('disp-comp-ipca').textContent=parseFloat(this.value).toFixed(2).replace('.',',');sliderFill(this);calcComparador()">
+      </div>
+
+    </div>
+
+    <!-- Products grid (generated by renderProdCards()) -->
+    <div id="comp-products" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px"></div>
+
+    <!-- Results table -->
+    <div style="background:#0d1b3e;border:1px solid rgba(255,255,255,0.07);border-radius:12px;overflow:hidden">
+      <div class="calc-table-header" style="padding:18px 20px 14px">
+        <div>
+          <p class="calc-table-title">Comparação por Produto</p>
+          <p class="calc-table-sub">Ordenado pelo maior rendimento líquido após IR</p>
+        </div>
+      </div>
+      <div class="calc-table-wrap" style="border:none;border-radius:0;border-top:1px solid rgba(255,255,255,0.06);max-height:none">
+        <table class="calc-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Produto</th>
+              <th>Tributação</th>
+              <th>Bruto R$</th>
+              <th>IR Retido</th>
+              <th>Líquido R$</th>
+              <th>Taxa % a.a.</th>
+              <th>Equiv. CDI</th>
+            </tr>
+          </thead>
+          <tbody id="comp-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+    <p style="font-size:11px;color:var(--gray-400);margin-top:10px;line-height:1.7">
+      (1) IR regressivo: 22,5% ≤180d · 20% ≤360d · 17,5% ≤720d · 15% >720d. &nbsp;(2) LCI/LCA/CRI/CRA/Debêntures incentivadas/Poupança: isentos de IR para PF. &nbsp;(3) CDI ≈ SELIC − 0,10% a.a. &nbsp;(4) Prazo em meses × 21 D.U. aproximados.
+    </p>
+  </div><!-- end tool-comparador -->
+
+</div><!-- end section-ferramentas -->
 
 <!-- ── FAQ SECTION ── -->
 <div id="section-faq">
@@ -1594,7 +1719,7 @@
   }
 
   function initSliders() {
-    ['c-valor','c-max-du','c-comp-pct'].forEach(id => {
+    ['c-valor','c-max-du','c-comp-pct','comp-valor','comp-prazo','comp-ipca'].forEach(id => {
       const el = document.getElementById(id);
       if (el) sliderFill(el);
     });
@@ -1709,23 +1834,160 @@
     }).join('');
   }
 
+  /* ══════════════════════════════════════════
+     COMPARADOR DE RENDA FIXA
+  ══════════════════════════════════════════ */
+
+  const COMP_PRODS = [
+    { id:'cdb',     nome:'CDB',                    cor:'#3b82f6', isento:false, tipo:'pct_cdi',  min:50,  max:150, step:1,    val:100  },
+    { id:'lci',     nome:'LCI',                    cor:'#16a34a', isento:true,  tipo:'pct_cdi',  min:50,  max:120, step:1,    val:90   },
+    { id:'lca',     nome:'LCA',                    cor:'#15803d', isento:true,  tipo:'pct_cdi',  min:50,  max:120, step:1,    val:90   },
+    { id:'trselic', nome:'Tesouro Selic',           cor:'#7c3aed', isento:false, tipo:'pct_cdi',  min:90,  max:105, step:0.25, val:100  },
+    { id:'tripca',  nome:'Tesouro IPCA+',           cor:'#ea580c', isento:false, tipo:'ipca_plus',min:3,   max:12,  step:0.25, val:6.5  },
+    { id:'trpre',   nome:'Tesouro Prefixado',       cor:'#dc2626', isento:false, tipo:'pct_aa',   min:8,   max:22,  step:0.25, val:14.0 },
+    { id:'poupanca',nome:'Poupança',                cor:'#0891b2', isento:true,  tipo:'auto',     min:0,   max:0,   step:0,    val:null },
+    { id:'cricra',  nome:'CRI / CRA',               cor:'#b8a060', isento:true,  tipo:'pct_cdi',  min:50,  max:130, step:1,    val:95   },
+    { id:'deb',     nome:'Debêntures Incent.',       cor:'#9333ea', isento:true,  tipo:'pct_cdi',  min:80,  max:160, step:1,    val:110  },
+  ];
+
+  function renderProdCards() {
+    const container = document.getElementById('comp-products');
+    if (!container) return;
+    container.innerHTML = COMP_PRODS.map(p => {
+      const taxBadge = p.isento
+        ? '<span class="comp-tax-badge tax-isento">Isento IR · PF</span>'
+        : '<span class="comp-tax-badge tax-ir">IR Regressivo</span>';
+
+      if (p.tipo === 'auto') {
+        return `<div class="inp-card">
+          <div class="comp-prod-header">
+            <div class="inp-card-label" style="--dot-clr:${p.cor}">${p.nome}</div>
+            ${taxBadge}
+          </div>
+          <div class="inp-card-value"><span class="v-num" style="font-size:18px;opacity:.45">Automático</span></div>
+          <div class="comp-prod-auto">70% da SELIC (quando SELIC &gt; 8,5%)</div>
+        </div>`;
+      }
+
+      const isIPCA  = p.tipo === 'ipca_plus';
+      const prefix  = isIPCA ? '<span class="v-prefix" style="font-size:12px">IPCA +&nbsp;</span>' : '';
+      const dispVal = isIPCA ? p.val.toFixed(2) : p.val;
+      const unit    = p.tipo === 'pct_cdi' ? '% CDI' : '% a.a.';
+      const dp      = p.step < 1 ? 2 : 0;
+
+      return `<div class="inp-card">
+        <div class="comp-prod-header">
+          <div class="inp-card-label" style="--dot-clr:${p.cor}">${p.nome}</div>
+          ${taxBadge}
+        </div>
+        <div class="inp-card-value">
+          ${prefix}
+          <span class="v-num" id="disp-cp-${p.id}">${dispVal}</span>
+          <span class="v-unit">${unit}</span>
+        </div>
+        <input type="range" id="cp-${p.id}" min="${p.min}" max="${p.max}" step="${p.step}" value="${p.val}"
+          oninput="document.getElementById('disp-cp-${p.id}').textContent=parseFloat(this.value).toFixed(${dp});sliderFill(this);calcComparador()">
+      </div>`;
+    }).join('');
+
+    COMP_PRODS.filter(p => p.tipo !== 'auto').forEach(p => {
+      const el = document.getElementById(`cp-${p.id}`);
+      if (el) sliderFill(el);
+    });
+  }
+
+  function calcComparador() {
+    const valor   = parseFloat(document.getElementById('comp-valor')?.value)   || 100000;
+    const prazoM  = parseInt(document.getElementById('comp-prazo')?.value)      || 12;
+    const selic_v = parseFloat(document.getElementById('c-selic')?.value)       || 14.75;
+    const ipca_aa = parseFloat(document.getElementById('comp-ipca')?.value)     || 5.0;
+
+    const cdi_aa    = Math.max(0, selic_v - 0.10);
+    const DU        = prazoM * 21;
+    const dias_corr = prazoM * 30;
+    const ir_rate   = getIR(dias_corr);
+    const cdi_dia   = Math.pow(1 + cdi_aa / 100, 1 / 252) - 1;
+
+    const cdi100_bruto = valor * (Math.pow(1 + cdi_dia, DU) - 1);
+    const cdi100_liq   = cdi100_bruto * (1 - ir_rate);
+
+    const results = COMP_PRODS.map(p => {
+      let bruto = 0;
+
+      if (p.tipo === 'pct_cdi') {
+        const pctV = parseFloat(document.getElementById(`cp-${p.id}`)?.value) / 100 || 1;
+        bruto = valor * (Math.pow(1 + cdi_dia * pctV, DU) - 1);
+      } else if (p.tipo === 'ipca_plus') {
+        const spread = parseFloat(document.getElementById(`cp-${p.id}`)?.value) / 100 || 0.065;
+        bruto = valor * (Math.pow(1 + ipca_aa / 100, DU / 252) * Math.pow(1 + spread, DU / 252) - 1);
+      } else if (p.tipo === 'pct_aa') {
+        const taxa = parseFloat(document.getElementById(`cp-${p.id}`)?.value) / 100 || 0.14;
+        bruto = valor * (Math.pow(1 + taxa, DU / 252) - 1);
+      } else if (p.tipo === 'auto') {
+        const s = selic_v / 100;
+        const poupa_aa = s > 0.085 ? 0.70 * s : (Math.pow(1.005, 12) - 1);
+        bruto = valor * (Math.pow(1 + poupa_aa, DU / 252) - 1);
+      }
+
+      const ir_val = p.isento ? 0 : bruto * ir_rate;
+      const liq    = bruto - ir_val;
+      const equiv  = cdi100_liq > 0 ? (liq / cdi100_liq) * 100 : 0;
+      const taxa_aa = DU > 0 ? (Math.pow(Math.max(0, 1 + liq / valor), 252 / DU) - 1) * 100 : 0;
+
+      return { ...p, bruto, ir_val, liq, equiv, taxa_aa, ir_rate };
+    });
+
+    results.sort((a, b) => b.liq - a.liq);
+
+    const tbody = document.getElementById('comp-tbody');
+    if (!tbody) return;
+
+    tbody.innerHTML = results.map((r, i) => {
+      const rank     = i + 1;
+      const liqColor = rank === 1 ? 'var(--accent)' : 'rgba(255,255,255,.85)';
+      const irCell   = r.isento ? '—' : `<span class="iof-red">R$ ${brl(r.ir_val)}</span>`;
+      const taxCell  = r.isento
+        ? '<span class="iof-free">Isento IR</span>'
+        : `<span style="color:rgba(255,255,255,.4)">${(r.ir_rate * 100).toFixed(1)}%</span>`;
+      const equivColor = r.isento ? '#4ade80' : 'rgba(255,255,255,.5)';
+
+      return `<tr${rank === 1 ? ' class="highlight"' : ''}>
+        <td style="font-weight:700;color:${r.cor};font-size:13px">${rank}º</td>
+        <td><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${r.cor};margin-right:7px;vertical-align:middle"></span><span style="color:#fff;font-weight:600">${r.nome}</span></td>
+        <td>${taxCell}</td>
+        <td>R$ ${brl(r.bruto)}</td>
+        <td>${irCell}</td>
+        <td style="font-weight:700;color:${liqColor}">R$ ${brl(r.liq)}</td>
+        <td style="color:rgba(255,255,255,.6)">${r.taxa_aa.toFixed(2).replace('.', ',')}%</td>
+        <td style="font-weight:700;color:${equivColor}">${r.equiv.toFixed(1).replace('.', ',')}%</td>
+      </tr>`;
+    }).join('');
+  }
+
   /* ── Tab switch ── */
   function switchTab(tab) {
-    document.getElementById('section-faq').style.display   = tab === 'faq'   ? 'block' : 'none';
-    document.getElementById('section-tools').style.display = tab === 'tools' ? 'block' : 'none';
-    document.querySelectorAll('.tab-btn').forEach((b, i) =>
-      b.classList.toggle('active', (i === 0) === (tab === 'faq')));
+    document.getElementById('section-faq').style.display         = tab === 'faq'         ? 'block' : 'none';
+    document.getElementById('section-tools').style.display       = tab === 'tools'       ? 'block' : 'none';
+    document.getElementById('section-ferramentas').style.display = tab === 'ferramentas' ? 'block' : 'none';
+    document.querySelectorAll('.tab-btn').forEach(b =>
+      b.classList.toggle('active', b.dataset.tab === tab));
     if (tab === 'tools') {
-      if (_allRows.length === 0) calcular(); // garante dados imediatos
-      fetchSELIC(); // atualiza SELIC real
+      if (_allRows.length === 0) calcular();
+      fetchSELIC();
+    }
+    if (tab === 'ferramentas') {
+      fetchSELIC();
+      calcComparador();
     }
   }
 
-  /* ── Tool sub-nav ── */
+  /* ── Tool sub-nav (Ferramentas) ── */
   function switchTool(toolId) {
-    document.querySelectorAll('.tool-nav-btn').forEach(b =>
+    const sec = document.getElementById('section-ferramentas');
+    if (!sec) return;
+    sec.querySelectorAll('.tool-nav-btn').forEach(b =>
       b.classList.toggle('active', b.id === 'tnav-' + toolId));
-    document.querySelectorAll('.calc-wrap').forEach(el =>
+    sec.querySelectorAll('.calc-wrap').forEach(el =>
       el.style.display = el.id === 'tool-' + toolId ? 'block' : 'none');
   }
 
@@ -1750,12 +2012,19 @@
       }
       if (statusEl) statusEl.textContent = `SELIC ${selic.toFixed(2).replace('.', ',')}% a.a.`;
       if (chipEl) chipEl.style.borderColor = '#bbf7d0';
+      // Atualiza display do CDI no Comparador RF
+      const compCdiDisp  = document.getElementById('disp-comp-cdi');
+      const compCdiRange = document.getElementById('comp-cdi-range');
+      if (compCdiDisp)  compCdiDisp.textContent = selic.toFixed(2).replace('.', ',');
+      if (compCdiRange) { compCdiRange.value = selic; sliderFill(compCdiRange); }
       calcular();
+      calcComparador();
     } catch {
       if (displayEl) displayEl.textContent = '—';
       if (statusEl) statusEl.textContent = 'SELIC indisponível';
       if (chipEl) { chipEl.style.borderColor = '#fecaca'; chipEl.querySelector('.dot').style.background = '#dc2626'; }
       calcular();
+      calcComparador();
     }
   }
 
@@ -1778,10 +2047,12 @@
     if (moon) moon.style.display = t === 'light' ? 'block' : 'none';
   })();
 
-  // Inicializa sliders, renderiza tabela com defaults e busca SELIC em paralelo
+  // Inicializa sliders, renderiza tabelas com defaults e busca SELIC em paralelo
   initSliders();
-  calcular(); // tabela aparece imediatamente com valores padrão
-  fetchSELIC(); // atualiza com SELIC real quando a API responder
+  calcular();         // Compromissada: tabela aparece imediatamente com valores padrão
+  renderProdCards();  // Comparador: gera cards dos produtos
+  calcComparador();   // Comparador: tabela aparece imediatamente
+  fetchSELIC();       // atualiza com SELIC real quando a API responder
 </script>
 </body>
 </html>
