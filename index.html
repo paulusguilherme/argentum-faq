@@ -394,6 +394,8 @@
       0%   { background-position: -600px 0; }
       100% { background-position: 600px 0; }
     }
+    @keyframes pm-spin { to { transform: rotate(360deg); } }
+    .pm-spin { animation: pm-spin 1s linear infinite; transform-origin: center; display:block; }
     .skeleton {
       background: var(--white);
       border-radius: var(--radius);
@@ -768,6 +770,7 @@
     @media (max-width: 768px) {
       .calc-inputs { grid-template-columns: repeat(2, 1fr); }
       #comp-products { grid-template-columns: repeat(2, 1fr) !important; }
+      .pm-mapping-grid { grid-template-columns: 1fr; }
     }
 
     /* product cards */
@@ -1009,6 +1012,69 @@
       background: rgba(184,160,96,0.07);
     }
     .day-btn.active .day-du { color: var(--accent2); }
+
+    /* ── CALCULADORA PREÇO MÉDIO ── */
+    .pm-dropzone {
+      background: #0d1b3e;
+      border: 2px dashed rgba(255,255,255,0.12);
+      border-radius: 12px;
+      padding: 52px 24px 44px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      margin-bottom: 10px;
+    }
+    .pm-dropzone:hover, .pm-dropzone.drag-over {
+      border-color: var(--accent);
+      background: rgba(184,160,96,0.05);
+    }
+    .pm-dropzone-icon  { color: rgba(255,255,255,0.18); margin-bottom: 14px; }
+    .pm-dropzone-title { font-size: 15px; font-weight: 700; color: rgba(255,255,255,0.65); margin-bottom: 6px; }
+    .pm-dropzone-sub   { font-size: 12px; color: rgba(255,255,255,0.28); margin-bottom: 22px; }
+    .pm-file-input     { display: none; }
+    .pm-upload-btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 9px 20px;
+      background: var(--accent); color: #06092B;
+      border: none; border-radius: 8px;
+      font-size: 13px; font-weight: 700;
+      cursor: pointer; transition: background 0.15s;
+      white-space: nowrap;
+    }
+    .pm-upload-btn:hover { background: var(--accent2); }
+    .pm-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 14px; border-radius: 7px;
+      font-size: 12.5px; font-weight: 600;
+      cursor: pointer; transition: all 0.15s; border: none;
+      white-space: nowrap;
+    }
+    .pm-btn-secondary {
+      background: rgba(255,255,255,0.07);
+      color: rgba(255,255,255,0.6);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .pm-btn-secondary:hover { background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.9); }
+    .pm-mapping-card {
+      background: #0d1b3e;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+    .pm-mapping-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 20px; }
+    .pm-select {
+      width: 100%; padding: 9px 12px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px;
+      color: rgba(255,255,255,0.8);
+      font-size: 13px; outline: none; cursor: pointer;
+      transition: border-color 0.15s;
+    }
+    .pm-select:focus { border-color: var(--accent); }
+    .pm-select option { background: #0d1b3e; }
+    .pm-export-group { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
 
     /* ── COMPARADOR RF ── */
     .comp-prod-header {
@@ -1331,6 +1397,9 @@
       <button class="tool-nav-btn active" onclick="switchTool('comparador')" id="tnav-comparador">
         Comparador RF
       </button>
+      <button class="tool-nav-btn" onclick="switchTool('precomed')" id="tnav-precomed">
+        Preço Médio
+      </button>
       <!-- futuras ferramentas aqui -->
     </div>
   </div>
@@ -1422,6 +1491,170 @@
     </p>
   </div><!-- end tool-comparador -->
 
+  <!-- ── CALCULADORA DE PREÇO MÉDIO ── -->
+  <div id="tool-precomed" class="calc-wrap" style="display:none">
+    <p class="calc-title">Calculadora de Preço Médio</p>
+    <p class="calc-sub">Faça upload da sua planilha de operações para calcular o preço médio de cada ativo automaticamente. Processado localmente — nenhum dado sai do navegador.</p>
+
+    <!-- ① Upload Zone -------------------------------------------------- -->
+    <div id="pm-upload-zone">
+      <div class="pm-dropzone" id="pm-dropzone">
+        <input type="file" id="pm-file-input" class="pm-file-input" accept=".xlsx,.xls">
+        <!-- idle state -->
+        <div id="pm-dz-idle">
+          <div class="pm-dropzone-icon">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+          </div>
+          <div class="pm-dropzone-title">Arraste sua planilha aqui</div>
+          <div class="pm-dropzone-sub">.xlsx ou .xls — clique ou arraste para enviar</div>
+          <button class="pm-upload-btn" type="button" onclick="document.getElementById('pm-file-input').click();event.stopPropagation()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+            Selecionar arquivo
+          </button>
+        </div>
+        <!-- loading state -->
+        <div id="pm-dz-loading" style="display:none">
+          <div style="color:var(--accent);margin-bottom:12px;display:flex;justify-content:center">
+            <svg class="pm-spin" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+            </svg>
+          </div>
+          <div class="pm-dropzone-title">Processando planilha...</div>
+          <div class="pm-dropzone-sub">aguarde um momento</div>
+        </div>
+      </div>
+      <p style="font-size:11px;color:var(--gray-400);margin-top:8px;line-height:1.7">
+        Colunas detectadas automaticamente: Ticker · Quantidade · Preço. Caso não encontradas, aparecerá a opção de mapeamento manual.
+      </p>
+    </div>
+
+    <!-- ② Mapeamento Manual (fallback) ---------------------------------- -->
+    <div id="pm-mapping-zone" style="display:none">
+      <div class="pm-mapping-card">
+        <p style="font-size:14px;font-weight:700;color:#fff;margin-bottom:4px">Mapeamento de colunas</p>
+        <p style="font-size:12px;color:rgba(255,255,255,.35);margin-bottom:16px">
+          Não conseguimos identificar as colunas automaticamente. Indique quais são Ticker, Quantidade e Preço:
+        </p>
+        <!-- Preview das primeiras linhas -->
+        <div id="pm-preview" style="overflow-x:auto;max-height:160px;overflow-y:auto;margin-bottom:20px"></div>
+        <!-- Dropdowns -->
+        <div class="pm-mapping-grid">
+          <div>
+            <div class="inp-card-label" style="margin-bottom:8px;--dot-clr:#3b82f6">Ticker / Ativo</div>
+            <select id="pm-map-ticker" class="pm-select"></select>
+          </div>
+          <div>
+            <div class="inp-card-label" style="margin-bottom:8px;--dot-clr:#16a34a">Quantidade</div>
+            <select id="pm-map-qty" class="pm-select"></select>
+          </div>
+          <div>
+            <div class="inp-card-label" style="margin-bottom:8px;--dot-clr:var(--accent)">Preço Unitário</div>
+            <select id="pm-map-price" class="pm-select"></select>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="pm-upload-btn" onclick="pmCalculateManual()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            Calcular
+          </button>
+          <button class="pm-btn pm-btn-secondary" onclick="pmReset()">Novo arquivo</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ③ Erro --------------------------------------------------------- -->
+    <div id="pm-error-zone" style="display:none">
+      <div class="pm-mapping-card" style="border-color:rgba(220,38,38,0.3);text-align:center;padding:36px">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="1.5" style="margin-bottom:12px">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        <div id="pm-error-msg" style="font-size:14px;color:#f87171;font-weight:600;margin-bottom:16px">Erro</div>
+        <button class="pm-btn pm-btn-secondary" onclick="pmReset()">Tentar novamente</button>
+      </div>
+    </div>
+
+    <!-- ④ Resultados ---------------------------------------------------- -->
+    <div id="pm-results-zone" style="display:none">
+
+      <!-- Summary cards -->
+      <div class="calc-summary">
+        <div class="sum-card">
+          <div class="sum-label">Ativos Distintos</div>
+          <div class="sum-value" id="pm-s-assets">—</div>
+          <div class="sum-sub">posições</div>
+        </div>
+        <div class="sum-card best">
+          <div class="sum-label">Total Investido</div>
+          <div class="sum-value" id="pm-s-total" style="font-size:20px">—</div>
+          <div class="sum-sub">soma das compras</div>
+        </div>
+        <div class="sum-card">
+          <div class="sum-label">Maior Posição</div>
+          <div class="sum-value" id="pm-s-biggest">—</div>
+          <div class="sum-sub" id="pm-s-biggest-sub"></div>
+        </div>
+      </div>
+
+      <!-- Botões de export -->
+      <div class="pm-export-group">
+        <button class="pm-upload-btn" onclick="pmExportCSV()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Exportar CSV
+        </button>
+        <button class="pm-btn pm-btn-secondary" id="pm-copy-btn" onclick="pmCopyTable()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+          </svg>
+          Copiar Tabela
+        </button>
+        <button class="pm-btn pm-btn-secondary" onclick="pmReset()" style="margin-left:auto">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.5"/>
+          </svg>
+          Novo arquivo
+        </button>
+      </div>
+
+      <!-- Tabela de resultados -->
+      <div style="background:#0d1b3e;border:1px solid rgba(255,255,255,0.07);border-radius:12px;overflow:hidden">
+        <div class="calc-table-header" style="padding:18px 20px 14px">
+          <div>
+            <p class="calc-table-title">Preço Médio por Ativo</p>
+            <p class="calc-table-sub">Ordenado alfabeticamente · Apenas operações de compra</p>
+          </div>
+        </div>
+        <div class="calc-table-wrap" style="border:none;border-radius:0;border-top:1px solid rgba(255,255,255,0.06);max-height:none">
+          <table class="calc-table">
+            <thead>
+              <tr>
+                <th>Ativo</th>
+                <th>Qtd Total</th>
+                <th style="text-align:right">Preço Médio</th>
+                <th>Total Investido</th>
+              </tr>
+            </thead>
+            <tbody id="pm-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+      <p style="font-size:11px;color:var(--gray-400);margin-top:10px;line-height:1.7">
+        Preço Médio = Σ(Qtd × Preço) ÷ Σ(Qtd). Operações de venda são ignoradas quando a coluna de tipo é detectada.
+      </p>
+    </div>
+
+  </div><!-- end tool-precomed -->
+
 </div><!-- end section-ferramentas -->
 
 <!-- ── FAQ SECTION ── -->
@@ -1463,6 +1696,7 @@
   <a href="https://wa.me/5551994691317" target="_blank" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">Desenvolvido por Guilherme Paulus</a>
 </footer>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
   const CAT_CONFIG = {
     'Cartão':           { dot: 'dot-cartao' },
@@ -2047,11 +2281,234 @@
     if (moon) moon.style.display = t === 'light' ? 'block' : 'none';
   })();
 
+  /* ══════════════════════════════════════════
+     CALCULADORA DE PREÇO MÉDIO
+  ══════════════════════════════════════════ */
+
+  let _pmRawData = null;
+  let _pmResults = [];
+
+  // Palavras-chave para detecção automática de colunas
+  const PM_COL_TICKER = ['ticker','ativo','papel','symbol','asset','cod','codigo'];
+  const PM_COL_QTD    = ['quantidade','qtd','shares','qty','quant','qtde'];
+  const PM_COL_PRICE  = ['preco','price','valor','vl ','vlr','pu','unit'];
+  const PM_COL_TYPE   = ['tipo','type','operacao','operação','op','side','natureza'];
+
+  function pmInit() {
+    const dz = document.getElementById('pm-dropzone');
+    const fi = document.getElementById('pm-file-input');
+    if (!dz || !fi) return;
+    dz.addEventListener('click', () => fi.click());
+    dz.addEventListener('dragover',  e => { e.preventDefault(); dz.classList.add('drag-over'); });
+    dz.addEventListener('dragleave', ()  => dz.classList.remove('drag-over'));
+    dz.addEventListener('drop', e => {
+      e.preventDefault();
+      dz.classList.remove('drag-over');
+      const f = e.dataTransfer.files[0];
+      if (f) pmProcessFile(f);
+    });
+    fi.addEventListener('change', e => { if (e.target.files[0]) pmProcessFile(e.target.files[0]); });
+  }
+
+  function pmProcessFile(file) {
+    if (!file.name.match(/\.(xlsx|xls)$/i)) {
+      pmShowError('Formato não suportado. Envie um arquivo .xlsx ou .xls'); return;
+    }
+    if (typeof XLSX === 'undefined') {
+      pmShowError('Biblioteca SheetJS não carregada. Verifique sua conexão e recarregue a página.'); return;
+    }
+    // Mostra loading
+    document.getElementById('pm-dz-idle').style.display    = 'none';
+    document.getElementById('pm-dz-loading').style.display = 'block';
+
+    const reader = new FileReader();
+    reader.onload = e => {
+      try {
+        const wb  = XLSX.read(e.target.result, { type: 'array' });
+        const ws  = wb.Sheets[wb.SheetNames[0]];
+        const raw = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+        if (!raw || raw.length < 2) { pmShowError('Planilha vazia ou sem dados suficientes.'); return; }
+        _pmRawData = raw;
+        const headers = raw[0].map(h => String(h).trim());
+        const m = pmAutoDetect(headers);
+        if (m.ticker !== -1 && m.qty !== -1 && m.price !== -1) {
+          pmCalculate(raw, m);
+        } else {
+          pmShowMapping(raw, headers);
+        }
+      } catch (err) {
+        pmShowError('Erro ao ler o arquivo: ' + err.message);
+      }
+    };
+    reader.onerror = () => pmShowError('Não foi possível ler o arquivo.');
+    reader.readAsArrayBuffer(file);
+  }
+
+  function pmNorm(s) {
+    return String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').trim();
+  }
+
+  function pmAutoDetect(headers) {
+    const find = keys => headers.findIndex(h => keys.some(k => pmNorm(h).includes(k)));
+    return {
+      ticker: find(PM_COL_TICKER),
+      qty:    find(PM_COL_QTD),
+      price:  find(PM_COL_PRICE),
+      type:   find(PM_COL_TYPE),
+    };
+  }
+
+  function pmParseNum(v) {
+    if (v === null || v === undefined || v === '') return NaN;
+    if (typeof v === 'number') return v;
+    let s = String(v).replace(/[R$\s]/g, '').trim();
+    const hasComma = s.includes(','), hasDot = s.includes('.');
+    if (hasComma && hasDot) {
+      // "1.234,56" vs "1,234.56": último separador é decimal
+      s = s.lastIndexOf(',') > s.lastIndexOf('.') ? s.replace(/\./g,'').replace(',','.') : s.replace(/,/g,'');
+    } else {
+      s = s.replace(',', '.');
+    }
+    return parseFloat(s);
+  }
+
+  function pmCalculate(raw, m) {
+    const groups = {};
+    for (let i = 1; i < raw.length; i++) {
+      const row = raw[i];
+      if (!row || row.every(c => c === '' || c === null)) continue;
+      const ticker = String(row[m.ticker] ?? '').trim().toUpperCase();
+      if (!ticker) continue;
+      // Filtra por tipo (compra) se coluna existir
+      if (m.type !== -1) {
+        const op = pmNorm(row[m.type] ?? '');
+        const isBuy = ['compra','buy','entrada'].some(v => op.includes(v)) || op === 'c';
+        if (!isBuy) continue;
+      }
+      const qty   = pmParseNum(row[m.qty]);
+      const price = pmParseNum(row[m.price]);
+      if (isNaN(qty) || isNaN(price) || qty <= 0 || price <= 0) continue;
+      if (!groups[ticker]) groups[ticker] = { qty: 0, total: 0 };
+      groups[ticker].qty   += qty;
+      groups[ticker].total += qty * price;
+    }
+    _pmResults = Object.entries(groups)
+      .map(([ticker, g]) => ({ ticker, qty: g.qty, avgPrice: g.total / g.qty, totalInvested: g.total }))
+      .sort((a, b) => a.ticker.localeCompare(b.ticker));
+    if (!_pmResults.length) { pmShowError('Nenhuma operação de compra encontrada com dados válidos.'); return; }
+    pmShowResults();
+  }
+
+  function pmShowResults() {
+    ['pm-upload-zone','pm-mapping-zone','pm-error-zone'].forEach(id => {
+      const el = document.getElementById(id); if (el) el.style.display = 'none';
+    });
+    document.getElementById('pm-results-zone').style.display = 'block';
+    const totalInvested = _pmResults.reduce((s, r) => s + r.totalInvested, 0);
+    const biggest = _pmResults.reduce((a, b) => b.totalInvested > a.totalInvested ? b : a);
+    document.getElementById('pm-s-assets').textContent        = _pmResults.length;
+    document.getElementById('pm-s-total').textContent         = 'R$ ' + brl(totalInvested);
+    document.getElementById('pm-s-biggest').textContent       = biggest.ticker;
+    document.getElementById('pm-s-biggest-sub').textContent   = 'R$ ' + brl(biggest.totalInvested);
+    const totalQty = _pmResults.reduce((s, r) => s + r.qty, 0);
+    document.getElementById('pm-tbody').innerHTML =
+      _pmResults.map(r => `<tr>
+        <td style="color:#fff;font-weight:700">${escHtml(r.ticker)}</td>
+        <td>${r.qty.toLocaleString('pt-BR')}</td>
+        <td style="text-align:right;font-weight:700;color:var(--accent)">R$ ${brl(r.avgPrice)}</td>
+        <td>R$ ${brl(r.totalInvested)}</td>
+      </tr>`).join('')
+      + `<tr style="border-top:2px solid rgba(255,255,255,0.1)">
+        <td style="color:#fff;font-weight:700">TOTAL</td>
+        <td style="font-weight:600;color:rgba(255,255,255,.5)">${totalQty.toLocaleString('pt-BR')}</td>
+        <td>—</td>
+        <td style="font-weight:700;color:var(--accent)">R$ ${brl(totalInvested)}</td>
+      </tr>`;
+  }
+
+  function pmShowMapping(raw, headers) {
+    ['pm-upload-zone','pm-error-zone'].forEach(id => {
+      const el = document.getElementById(id); if (el) el.style.display = 'none';
+    });
+    document.getElementById('pm-mapping-zone').style.display = 'block';
+    const previewEl = document.getElementById('pm-preview');
+    if (previewEl) {
+      const rows = raw.slice(1, 4);
+      previewEl.innerHTML = `<table class="calc-table"><thead><tr>${
+        headers.map((h,i) => `<th>${escHtml(h) || 'Col.'+(i+1)}</th>`).join('')
+      }</tr></thead><tbody>${
+        rows.map(row => `<tr>${headers.map((_,i) => `<td>${escHtml(String(row[i]??'').slice(0,25))}</td>`).join('')}</tr>`).join('')
+      }</tbody></table>`;
+    }
+    const opts = headers.map((h,i) => `<option value="${i}">${escHtml(h) || 'Coluna '+(i+1)}</option>`).join('');
+    ['pm-map-ticker','pm-map-qty','pm-map-price'].forEach(id => {
+      const s = document.getElementById(id);
+      if (s) s.innerHTML = '<option value="-1">— Selecionar —</option>' + opts;
+    });
+  }
+
+  function pmCalculateManual() {
+    const t = parseInt(document.getElementById('pm-map-ticker')?.value ?? '-1');
+    const q = parseInt(document.getElementById('pm-map-qty')?.value    ?? '-1');
+    const p = parseInt(document.getElementById('pm-map-price')?.value  ?? '-1');
+    if (t < 0 || q < 0 || p < 0) { alert('Selecione as três colunas antes de calcular.'); return; }
+    pmCalculate(_pmRawData, { ticker: t, qty: q, price: p, type: -1 });
+  }
+
+  function pmExportCSV() {
+    if (!_pmResults.length) return;
+    const csv = 'Ticker,Quantidade,Preço Médio,Total Investido\n'
+      + _pmResults.map(r =>
+          `${r.ticker},${r.qty},${r.avgPrice.toFixed(2).replace('.',',')},${r.totalInvested.toFixed(2).replace('.',',')}`
+        ).join('\n');
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' }));
+    a.download = 'preco-medio.csv';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  function pmCopyTable() {
+    if (!_pmResults.length) return;
+    const txt = 'Ticker\tQuantidade\tPreço Médio\tTotal Investido\n'
+      + _pmResults.map(r =>
+          `${r.ticker}\t${r.qty}\t${r.avgPrice.toFixed(2).replace('.',',')}\t${r.totalInvested.toFixed(2).replace('.',',')}`
+        ).join('\n');
+    navigator.clipboard.writeText(txt).then(() => {
+      const btn = document.getElementById('pm-copy-btn');
+      if (!btn) return;
+      const orig = btn.innerHTML;
+      btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>&nbsp;Copiado!';
+      btn.style.color = '#4ade80';
+      setTimeout(() => { btn.innerHTML = orig; btn.style.color = ''; }, 2000);
+    });
+  }
+
+  function pmReset() {
+    _pmRawData = null; _pmResults = [];
+    ['pm-mapping-zone','pm-error-zone','pm-results-zone'].forEach(id => {
+      const el = document.getElementById(id); if (el) el.style.display = 'none';
+    });
+    document.getElementById('pm-upload-zone').style.display   = 'block';
+    document.getElementById('pm-dz-idle').style.display       = 'block';
+    document.getElementById('pm-dz-loading').style.display    = 'none';
+    const fi = document.getElementById('pm-file-input'); if (fi) fi.value = '';
+  }
+
+  function pmShowError(msg) {
+    ['pm-upload-zone','pm-mapping-zone','pm-results-zone'].forEach(id => {
+      const el = document.getElementById(id); if (el) el.style.display = 'none';
+    });
+    document.getElementById('pm-error-zone').style.display = 'block';
+    const el = document.getElementById('pm-error-msg'); if (el) el.textContent = msg;
+  }
+
   // Inicializa sliders, renderiza tabelas com defaults e busca SELIC em paralelo
   initSliders();
   calcular();         // Compromissada: tabela aparece imediatamente com valores padrão
   renderProdCards();  // Comparador: gera cards dos produtos
   calcComparador();   // Comparador: tabela aparece imediatamente
+  pmInit();           // Preço Médio: inicializa drag-and-drop
   fetchSELIC();       // atualiza com SELIC real quando a API responder
 </script>
 </body>
