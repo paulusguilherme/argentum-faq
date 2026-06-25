@@ -556,11 +556,7 @@
       color: #4ade80;
       border-color: rgba(22,163,74,0.25);
     }
-    /* tool nav bar fundo no dark */
-    html[data-theme="dark"] #section-ferramentas > div:first-child {
-      background: #081530 !important;
-      border-bottom-color: rgba(255,255,255,0.07) !important;
-    }
+    /* sub-nav dark override removed — ferramentas agora são abas separadas */
 
     /* ── CATEGORY COLORS (dots) ── */
     .dot-cartao       { background: #d97706; }
@@ -655,9 +651,10 @@
     .tab-btn.active svg { opacity: 1; }
 
     /* ── CALCULATOR ── */
-    #section-tools       { display: none; }
-    #section-ferramentas { display: none; }
-    #section-faq         { display: block; }
+    #section-tools      { display: none; }
+    #section-comparador { display: none; }
+    #section-precomed   { display: none; }
+    #section-faq        { display: block; }
 
     .calc-wrap {
       max-width: 1140px;
@@ -1223,12 +1220,19 @@
       </svg>
       Compromissadas
     </button>
-    <button class="tab-btn" data-tab="ferramentas" onclick="switchTab('ferramentas')">
+    <button class="tab-btn" data-tab="comparador" onclick="switchTab('comparador')">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/>
         <line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/>
       </svg>
-      Ferramentas
+      Comparador RF
+    </button>
+    <button class="tab-btn" data-tab="precomed" onclick="switchTab('precomed')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="3" width="18" height="18" rx="2"/><line x1="8" y1="12" x2="16" y2="12"/>
+        <line x1="12" y1="8" x2="12" y2="16"/>
+      </svg>
+      Calculadora PM
     </button>
   </div>
 </div>
@@ -1260,7 +1264,7 @@
           <span class="v-prefix">R$</span>
           <span class="v-num" id="display-valor">1.000.000</span>
         </div>
-        <input type="range" id="c-valor" min="1000" max="3000000" step="1000" value="1000000"
+        <input type="range" id="c-valor" min="1000" max="3000000" step="5000" value="1000000"
           oninput="document.getElementById('display-valor').textContent=parseInt(this.value).toLocaleString('pt-BR');sliderFill(this);calcular()">
       </div>
 
@@ -1288,10 +1292,10 @@
       <div class="inp-card">
         <div class="inp-card-label">Simulação até</div>
         <div class="inp-card-value">
-          <span class="v-num" id="display-maxdu">30</span>
+          <span class="v-num" id="display-maxdu">10</span>
           <span class="v-unit">dias úteis</span>
         </div>
-        <input type="range" id="c-max-du" min="1" max="30" step="1" value="30"
+        <input type="range" id="c-max-du" min="1" max="30" step="1" value="10"
           oninput="document.getElementById('display-maxdu').textContent=this.value;sliderFill(this);calcular()">
       </div>
 
@@ -1334,10 +1338,10 @@
       <div class="inp-card">
         <div class="inp-card-label">Compromissada · XP · Isenta IOF</div>
         <div class="inp-card-value">
-          <span class="v-num" id="display-comp-pct">100</span>
+          <span class="v-num" id="display-comp-pct">80</span>
           <span class="v-unit">% do CDI</span>
         </div>
-        <input type="range" id="c-comp-pct" min="50" max="150" step="5" value="100"
+        <input type="range" id="c-comp-pct" min="50" max="150" step="5" value="80"
           oninput="document.getElementById('display-comp-pct').textContent=this.value;sliderFill(this);calcular()">
         <div class="prod-badges">
           <span class="prod-badge badge-dk-green">Isenta de IOF</span>
@@ -1390,20 +1394,8 @@
 
 </div><!-- end section-tools -->
 
-<!-- ── FERRAMENTAS SECTION ── -->
-<div id="section-ferramentas">
-  <div style="background:var(--white);border-bottom:1px solid var(--gray-200);">
-    <div style="max-width:1140px;margin:0 auto;padding:0 32px;display:flex;gap:4px;overflow-x:auto;">
-      <button class="tool-nav-btn active" onclick="switchTool('comparador')" id="tnav-comparador">
-        Comparador RF
-      </button>
-      <button class="tool-nav-btn" onclick="switchTool('precomed')" id="tnav-precomed">
-        Preço Médio
-      </button>
-      <!-- futuras ferramentas aqui -->
-    </div>
-  </div>
-
+<!-- ── COMPARADOR RF SECTION ── -->
+<div id="section-comparador">
   <!-- ── COMPARADOR DE RENDA FIXA ── -->
   <div id="tool-comparador" class="calc-wrap">
     <p class="calc-title">Comparador de Renda Fixa</p>
@@ -1491,8 +1483,11 @@
     </p>
   </div><!-- end tool-comparador -->
 
-  <!-- ── CALCULADORA DE PREÇO MÉDIO ── -->
-  <div id="tool-precomed" class="calc-wrap" style="display:none">
+</div><!-- end section-comparador -->
+
+<!-- ── CALCULADORA PM SECTION ── -->
+<div id="section-precomed">
+  <div id="tool-precomed" class="calc-wrap">
     <p class="calc-title">Calculadora de Preço Médio</p>
     <p class="calc-sub">Faça upload da sua planilha de operações para calcular o preço médio de cada ativo automaticamente. Processado localmente — nenhum dado sai do navegador.</p>
 
@@ -1605,12 +1600,19 @@
 
       <!-- Botões de export -->
       <div class="pm-export-group">
-        <button class="pm-upload-btn" onclick="pmExportCSV()">
+        <button class="pm-upload-btn" onclick="pmExportXLSX()">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
             <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
           </svg>
-          Exportar CSV
+          Exportar Excel
+        </button>
+        <button class="pm-btn pm-btn-secondary" onclick="pmExportCSV()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+          </svg>
+          CSV
         </button>
         <button class="pm-btn pm-btn-secondary" id="pm-copy-btn" onclick="pmCopyTable()">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1655,7 +1657,7 @@
 
   </div><!-- end tool-precomed -->
 
-</div><!-- end section-ferramentas -->
+</div><!-- end section-precomed -->
 
 <!-- ── FAQ SECTION ── -->
 <div id="section-faq">
@@ -2200,29 +2202,14 @@
 
   /* ── Tab switch ── */
   function switchTab(tab) {
-    document.getElementById('section-faq').style.display         = tab === 'faq'         ? 'block' : 'none';
-    document.getElementById('section-tools').style.display       = tab === 'tools'       ? 'block' : 'none';
-    document.getElementById('section-ferramentas').style.display = tab === 'ferramentas' ? 'block' : 'none';
+    ['faq','tools','comparador','precomed'].forEach(s => {
+      const el = document.getElementById('section-' + s);
+      if (el) el.style.display = s === tab ? 'block' : 'none';
+    });
     document.querySelectorAll('.tab-btn').forEach(b =>
       b.classList.toggle('active', b.dataset.tab === tab));
-    if (tab === 'tools') {
-      if (_allRows.length === 0) calcular();
-      fetchSELIC();
-    }
-    if (tab === 'ferramentas') {
-      fetchSELIC();
-      calcComparador();
-    }
-  }
-
-  /* ── Tool sub-nav (Ferramentas) ── */
-  function switchTool(toolId) {
-    const sec = document.getElementById('section-ferramentas');
-    if (!sec) return;
-    sec.querySelectorAll('.tool-nav-btn').forEach(b =>
-      b.classList.toggle('active', b.id === 'tnav-' + toolId));
-    sec.querySelectorAll('.calc-wrap').forEach(el =>
-      el.style.display = el.id === 'tool-' + toolId ? 'block' : 'none');
+    if (tab === 'tools')      { if (_allRows.length === 0) calcular(); fetchSELIC(); }
+    if (tab === 'comparador') { fetchSELIC(); calcComparador(); }
   }
 
   /* ── Busca SELIC do BCB ── */
@@ -2457,15 +2444,41 @@
 
   function pmExportCSV() {
     if (!_pmResults.length) return;
-    const csv = 'Ticker,Quantidade,Preço Médio,Total Investido\n'
+    // Usa ";" como separador para compatibilidade com Excel PT-BR (que usa vírgula como decimal)
+    const csv = 'Ticker;Quantidade;Preco Medio;Total Investido\n'
       + _pmResults.map(r =>
-          `${r.ticker},${r.qty},${r.avgPrice.toFixed(2).replace('.',',')},${r.totalInvested.toFixed(2).replace('.',',')}`
+          `${r.ticker};${r.qty};${r.avgPrice.toFixed(2).replace('.',',')};${r.totalInvested.toFixed(2).replace('.',',')}`
         ).join('\n');
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' }));
     a.download = 'preco-medio.csv';
     a.click();
     URL.revokeObjectURL(a.href);
+  }
+
+  function pmExportXLSX() {
+    if (!_pmResults.length || typeof XLSX === 'undefined') return;
+    const totalInvested = _pmResults.reduce((s, r) => s + r.totalInvested, 0);
+    const totalQty      = _pmResults.reduce((s, r) => s + r.qty, 0);
+    // Monta array de rows com tipos corretos (número, não string)
+    const rows = _pmResults.map(r => ({
+      'Ticker':          r.ticker,
+      'Quantidade':      r.qty,
+      'Preço Médio':     parseFloat(r.avgPrice.toFixed(2)),
+      'Total Investido': parseFloat(r.totalInvested.toFixed(2)),
+    }));
+    rows.push({
+      'Ticker': 'TOTAL',
+      'Quantidade': totalQty,
+      'Preço Médio': null,
+      'Total Investido': parseFloat(totalInvested.toFixed(2)),
+    });
+    const ws = XLSX.utils.json_to_sheet(rows);
+    // Largura das colunas
+    ws['!cols'] = [{ wch: 14 }, { wch: 14 }, { wch: 16 }, { wch: 18 }];
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Preço Médio');
+    XLSX.writeFile(wb, 'preco-medio.xlsx');
   }
 
   function pmCopyTable() {
