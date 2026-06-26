@@ -16,7 +16,7 @@ module.exports = async function handler(req, res) {
     do {
       const body = {
         filter: { property: 'Status', select: { equals: 'Ativo' } },
-        sorts: [{ property: 'Categoria', direction: 'ascending' }],
+        sorts: [{ timestamp: 'last_edited_time', direction: 'descending' }],
         page_size: 100,
       };
       if (cursor) body.start_cursor = cursor;
