@@ -556,7 +556,11 @@
       color: #4ade80;
       border-color: rgba(22,163,74,0.25);
     }
-    /* sub-nav dark override removed — ferramentas agora são abas separadas */
+    /* sub-nav dark override — compromissadas */
+    html[data-theme="dark"] #comp-subnav {
+      background: #081530 !important;
+      border-bottom-color: rgba(255,255,255,0.07) !important;
+    }
 
     /* ── CATEGORY COLORS (dots) ── */
     .dot-cartao       { background: #d97706; }
@@ -1240,6 +1244,14 @@
 <!-- ── COMPROMISSADAS SECTION ── -->
 <div id="section-tools">
 
+  <!-- Sub-nav -->
+  <div id="comp-subnav" style="background:var(--white);border-bottom:1px solid var(--gray-200);">
+    <div style="max-width:1140px;margin:0 auto;padding:0 32px;display:flex;gap:4px;overflow-x:auto;">
+      <button class="tool-nav-btn active" onclick="switchCompView('calculadora')" id="cnav-calculadora">Calculadora</button>
+      <button class="tool-nav-btn" onclick="switchCompView('clientes')" id="cnav-clientes">Clientes</button>
+    </div>
+  </div>
+
   <!-- ── CALCULADORA COMPROMISSADA ── -->
   <div id="tool-compromissada" class="calc-wrap">
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px;">
@@ -1391,6 +1403,66 @@
       (1) Líquido após IOF e IR. &nbsp;(2) CDI = SELIC − 0,10% a.a. / 252 d.u. &nbsp;(3) IOF regressivo (0% partir do 30º dia corrido). &nbsp;(4) IR 22,5%. &nbsp;(5) Não considera variação de juros.
     </p>
   </div><!-- end tool-compromissada -->
+
+  <!-- ── CLIENTES COMPROMISSADAS ── -->
+  <div id="tool-clientes" class="calc-wrap" style="display:none">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px">
+      <div>
+        <p class="calc-title" style="margin:0 0 4px">Clientes — Compromissadas</p>
+        <p style="font-size:12px;color:rgba(255,255,255,.4);margin:0" id="cli-status">—</p>
+      </div>
+      <button onclick="fetchClientes()" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:rgba(255,255,255,0.6);font-size:12px;font-weight:600;cursor:pointer">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.5"/>
+        </svg>
+        Atualizar
+      </button>
+    </div>
+
+    <!-- Filtros -->
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;align-items:center">
+      <div style="flex:1;min-width:220px">
+        <div class="inp-card-label" style="margin-bottom:6px;--dot-clr:var(--accent)">Assessor</div>
+        <select id="cli-assessor-select" class="pm-select" onchange="cliRenderTable()" style="width:100%">
+          <option value="">Todos os assessores</option>
+        </select>
+      </div>
+      <div style="flex:1;min-width:200px">
+        <div class="inp-card-label" style="margin-bottom:6px;--dot-clr:#3b82f6">Buscar cliente</div>
+        <input id="cli-search" type="text" placeholder="Código do cliente..." oninput="cliRenderTable()"
+          style="width:100%;padding:9px 12px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:rgba(255,255,255,0.8);font-size:13px">
+      </div>
+      <div style="align-self:flex-end;padding-bottom:1px">
+        <div style="font-size:11px;color:rgba(255,255,255,.35)" id="cli-count"></div>
+      </div>
+    </div>
+
+    <!-- Tabela -->
+    <div id="cli-table-wrap" style="display:none;background:#0d1b3e;border:1px solid rgba(255,255,255,0.07);border-radius:12px;overflow:hidden">
+      <div class="calc-table-wrap" style="border:none;border-radius:0;max-height:520px">
+        <table class="calc-table">
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Assessor</th>
+              <th>Taxa</th>
+              <th>Observações</th>
+            </tr>
+          </thead>
+          <tbody id="cli-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Loading / erro -->
+    <div id="cli-loading" style="text-align:center;padding:48px;color:rgba(255,255,255,.3);font-size:13px">
+      <svg class="pm-spin" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="2">
+        <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+      </svg>
+      <p style="margin-top:12px">Carregando dados...</p>
+    </div>
+
+  </div><!-- end tool-clientes -->
 
 </div><!-- end section-tools -->
 
@@ -2559,6 +2631,74 @@
     });
     document.getElementById('pm-error-zone').style.display = 'block';
     const el = document.getElementById('pm-error-msg'); if (el) el.textContent = msg;
+  }
+
+  /* ══ CLIENTES ══ */
+  const SHEETS_CLIENTES_URL = 'https://docs.google.com/spreadsheets/d/1Xvm7hStTe07bxfAWHH-B97B5TTnjBXBTMc89E90HsUA/gviz/tq?tqx=out:json&gid=0';
+  let _cliData = [];
+
+  function switchCompView(view) {
+    document.getElementById('tool-compromissada').style.display = view === 'calculadora' ? 'block' : 'none';
+    document.getElementById('tool-clientes').style.display      = view === 'clientes'    ? 'block' : 'none';
+    document.getElementById('cnav-calculadora').classList.toggle('active', view === 'calculadora');
+    document.getElementById('cnav-clientes').classList.toggle('active',    view === 'clientes');
+    if (view === 'clientes' && _cliData.length === 0) fetchClientes();
+  }
+
+  async function fetchClientes() {
+    const statusEl  = document.getElementById('cli-status');
+    const loadEl    = document.getElementById('cli-loading');
+    const tableWrap = document.getElementById('cli-table-wrap');
+    if (statusEl)  statusEl.textContent = 'Carregando...';
+    if (loadEl)    loadEl.style.display = 'block';
+    if (tableWrap) tableWrap.style.display = 'none';
+    try {
+      const res  = await fetch(SHEETS_CLIENTES_URL);
+      const text = await res.text();
+      // gviz response: google.visualization.Query.setResponse({...});
+      const json = JSON.parse(text.replace(/^[^(]+\(/, '').replace(/\);?\s*$/, ''));
+      _cliData = json.table.rows
+        .filter(r => r.c[0]?.v && r.c[1]?.v)
+        .map(r => ({
+          codigo:   String(r.c[0].v),
+          assessor: String(r.c[1].v),
+          taxa:     r.c[3]?.v != null ? r.c[3].v : '—',
+          erros:    r.c[4]?.v || '',
+        }));
+      const assessors = [...new Set(_cliData.map(r => r.assessor))].sort();
+      const sel = document.getElementById('cli-assessor-select');
+      const current = sel.value;
+      sel.innerHTML = '<option value="">Todos os assessores</option>'
+        + assessors.map(a => `<option value="${escHtml(a)}"${a === current ? ' selected' : ''}>${escHtml(a)}</option>`).join('');
+      cliRenderTable();
+      if (statusEl)  statusEl.textContent = `${_cliData.length} cliente${_cliData.length !== 1 ? 's' : ''} · atualizado agora`;
+      if (loadEl)    loadEl.style.display = 'none';
+      if (tableWrap) tableWrap.style.display = 'block';
+    } catch (e) {
+      if (statusEl) statusEl.textContent = 'Erro ao carregar: ' + e.message;
+      if (loadEl)   loadEl.style.display = 'none';
+    }
+  }
+
+  function cliRenderTable() {
+    const assessor = document.getElementById('cli-assessor-select')?.value || '';
+    const search   = (document.getElementById('cli-search')?.value || '').toLowerCase();
+    let filtered = _cliData;
+    if (assessor) filtered = filtered.filter(r => r.assessor === assessor);
+    if (search)   filtered = filtered.filter(r => r.codigo.toLowerCase().includes(search));
+    const tbody = document.getElementById('cli-tbody');
+    if (!tbody) return;
+    tbody.innerHTML = filtered.map(r => {
+      const hasErro = r.erros.length > 0;
+      return `<tr>
+        <td style="font-weight:600;color:#fff">${escHtml(r.codigo)}</td>
+        <td style="font-size:12px;color:rgba(255,255,255,.5)">${escHtml(r.assessor)}</td>
+        <td style="font-weight:700;color:var(--accent)">${r.taxa}% CDI</td>
+        <td style="${hasErro ? 'color:#f87171' : 'color:rgba(255,255,255,.3)'}; font-size:12px">${hasErro ? escHtml(r.erros) : '—'}</td>
+      </tr>`;
+    }).join('');
+    const countEl = document.getElementById('cli-count');
+    if (countEl) countEl.textContent = filtered.length + ' cliente' + (filtered.length !== 1 ? 's' : '');
   }
 
   // Inicializa sliders, renderiza tabelas com defaults e busca SELIC em paralelo
