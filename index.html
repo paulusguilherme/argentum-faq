@@ -466,13 +466,7 @@
       color: #fff;
       border-bottom-color: var(--accent);
     }
-    html[data-theme="dark"] .tool-nav-btn {
-      color: rgba(255,255,255,0.4);
-    }
-    html[data-theme="dark"] .tool-nav-btn.active {
-      color: #fff;
-      border-bottom-color: var(--accent);
-    }
+    /* tool-nav-btn sempre em contexto dark — overrides desnecessários removidos */
     html[data-theme="dark"] .filters-row {
       background: #060d1f;
       border-bottom-color: rgba(255,255,255,0.06);
@@ -556,11 +550,8 @@
       color: #4ade80;
       border-color: rgba(22,163,74,0.25);
     }
-    /* sub-nav dark override — compromissadas */
-    html[data-theme="dark"] #comp-subnav {
-      background: #081530 !important;
-      border-bottom-color: rgba(255,255,255,0.07) !important;
-    }
+    /* sub-nav dark override — agora fixo, inline define #07132a */
+    html[data-theme="dark"] #comp-subnav { background: #040e20 !important; }
 
     /* ── CATEGORY COLORS (dots) ── */
     .dot-cartao       { background: #d97706; }
@@ -655,9 +646,9 @@
     .tab-btn.active svg { opacity: 1; }
 
     /* ── CALCULATOR ── */
-    #section-tools      { display: none; }
-    #section-comparador { display: none; }
-    #section-precomed   { display: none; }
+    #section-tools      { display: none; background: #07132a; }
+    #section-comparador { display: none; background: #07132a; }
+    #section-precomed   { display: none; background: #07132a; }
     #section-faq        { display: block; }
 
     .calc-wrap {
@@ -676,6 +667,16 @@
       color: var(--gray-400);
       margin-bottom: 24px;
     }
+
+    /* ── Texto em contexto dark (seções de ferramentas) ── */
+    #section-tools .calc-title,
+    #section-comparador .calc-title,
+    #section-precomed .calc-title   { color: #fff; }
+    #section-tools .calc-sub,
+    #section-comparador .calc-sub,
+    #section-precomed .calc-sub     { color: rgba(255,255,255,0.45); }
+    #section-tools .pm-sub-note,
+    #section-precomed .pm-sub-note  { color: rgba(255,255,255,0.3); }
 
     /* ── INPUT CARDS (dark) ── */
     .calc-inputs {
@@ -1105,7 +1106,7 @@
       padding: 11px 16px;
       font-size: 12.5px;
       font-weight: 500;
-      color: var(--gray-400);
+      color: rgba(255,255,255,0.45);
       border: none;
       background: transparent;
       cursor: pointer;
@@ -1114,8 +1115,8 @@
       margin-bottom: -1px;
       white-space: nowrap;
     }
-    .tool-nav-btn:hover  { color: var(--black); }
-    .tool-nav-btn.active { color: var(--black); border-bottom-color: var(--accent); font-weight: 600; }
+    .tool-nav-btn:hover  { color: #fff; }
+    .tool-nav-btn.active { color: #fff; border-bottom-color: var(--accent); font-weight: 600; }
 
     @media (max-width: 768px) {
       .calc-products, .calc-summary { grid-template-columns: 1fr; }
@@ -1245,15 +1246,15 @@
 <div id="section-tools">
 
   <!-- Sub-nav -->
-  <div id="comp-subnav" style="background:var(--white);border-bottom:1px solid var(--gray-200);">
+  <div id="comp-subnav" style="background:#07132a;border-bottom:1px solid rgba(255,255,255,0.08);">
     <div style="max-width:1140px;margin:0 auto;padding:0 32px;display:flex;gap:4px;overflow-x:auto;">
-      <button class="tool-nav-btn active" onclick="switchCompView('calculadora')" id="cnav-calculadora">Calculadora</button>
-      <button class="tool-nav-btn" onclick="switchCompView('clientes')" id="cnav-clientes">Clientes</button>
+      <button class="tool-nav-btn active" onclick="switchCompView('clientes')" id="cnav-clientes">Clientes</button>
+      <button class="tool-nav-btn" onclick="switchCompView('calculadora')" id="cnav-calculadora">Calculadora Cliente</button>
     </div>
   </div>
 
   <!-- ── CALCULADORA COMPROMISSADA ── -->
-  <div id="tool-compromissada" class="calc-wrap">
+  <div id="tool-compromissada" class="calc-wrap" style="display:none">
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px;">
       <p class="calc-title" style="margin:0">Calculadora Compromissada</p>
       <span class="selic-chip" id="selic-chip">
@@ -1405,7 +1406,7 @@
   </div><!-- end tool-compromissada -->
 
   <!-- ── CLIENTES COMPROMISSADAS ── -->
-  <div id="tool-clientes" class="calc-wrap" style="display:none">
+  <div id="tool-clientes" class="calc-wrap">
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px">
       <div>
         <p class="calc-title" style="margin:0 0 4px">Clientes — Compromissadas</p>
@@ -1420,7 +1421,7 @@
     </div>
 
     <!-- Filtros -->
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;align-items:center">
+    <div style="background:#0d1b3e;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:20px 24px;margin-bottom:16px;display:flex;gap:16px;flex-wrap:wrap;align-items:flex-end">
       <div style="flex:1;min-width:220px">
         <div class="inp-card-label" style="margin-bottom:6px;--dot-clr:var(--accent)">Assessor</div>
         <select id="cli-assessor-select" class="pm-select" onchange="cliRenderTable()" style="width:100%">
@@ -1430,9 +1431,9 @@
       <div style="flex:1;min-width:200px">
         <div class="inp-card-label" style="margin-bottom:6px;--dot-clr:#3b82f6">Buscar cliente</div>
         <input id="cli-search" type="text" placeholder="Código do cliente..." oninput="cliRenderTable()"
-          style="width:100%;padding:9px 12px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:rgba(255,255,255,0.8);font-size:13px">
+          style="width:100%;padding:9px 12px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:rgba(255,255,255,0.8);font-size:13px;outline:none">
       </div>
-      <div style="align-self:flex-end;padding-bottom:1px">
+      <div style="padding-bottom:2px">
         <div style="font-size:11px;color:rgba(255,255,255,.35)" id="cli-count"></div>
       </div>
     </div>
@@ -2325,7 +2326,7 @@
     });
     document.querySelectorAll('.tab-btn').forEach(b =>
       b.classList.toggle('active', b.dataset.tab === tab));
-    if (tab === 'tools')      { if (_allRows.length === 0) calcular(); fetchSELIC(); }
+    if (tab === 'tools')      { fetchSELIC(); if (_cliData.length === 0) fetchClientes(); }
     if (tab === 'comparador') { fetchSELIC(); calcComparador(); }
   }
 
