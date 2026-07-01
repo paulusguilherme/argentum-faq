@@ -373,6 +373,28 @@
     }
     .card-content strong { color: var(--gray-600); }
     .card-content a { color: var(--accent2); text-decoration: underline; }
+    /* Tabelas do Notion dentro dos artigos */
+    .notion-table {
+      width: 100%; border-collapse: collapse;
+      margin: 12px 0; font-size: 12.5px; border-radius: 8px; overflow: hidden;
+    }
+    .notion-table th {
+      background: var(--gray-100, #f1f4f8);
+      color: var(--black);
+      font-weight: 700;
+      padding: 7px 12px;
+      border: 1px solid var(--gray-200);
+      text-align: left;
+      font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .notion-table td {
+      padding: 6px 12px;
+      border: 1px solid var(--gray-200);
+      color: var(--gray-500);
+      vertical-align: top;
+      line-height: 1.6;
+    }
+    .notion-table tr:nth-child(even) td { background: rgba(0,0,0,0.02); }
 
     /* ── BADGE NOVO ── */
     .badge-novo {
@@ -668,15 +690,22 @@
       margin-bottom: 24px;
     }
 
-    /* ── Texto em contexto dark (seções de ferramentas) ── */
-    #section-tools .calc-title,
-    #section-comparador .calc-title,
-    #section-precomed .calc-title   { color: #fff; }
-    #section-tools .calc-sub,
-    #section-comparador .calc-sub,
-    #section-precomed .calc-sub     { color: rgba(255,255,255,0.45); }
-    #section-tools .pm-sub-note,
-    #section-precomed .pm-sub-note  { color: rgba(255,255,255,0.3); }
+    /* ── DARK SECTIONS: sobrescreve variáveis para que todos inline styles se adaptem ── */
+    #section-tools, #section-comparador, #section-precomed {
+      --black:    #ffffff;
+      --white:    rgba(255,255,255,0.05);
+      --gray-100: rgba(255,255,255,0.04);
+      --gray-200: rgba(255,255,255,0.09);
+      --gray-400: rgba(255,255,255,0.38);
+      --gray-500: rgba(255,255,255,0.28);
+    }
+    /* Badges com cores hardcoded precisam de override específico */
+    #section-tools .badge-green,
+    #section-comparador .badge-green { background: rgba(22,163,74,0.14);  color: #4ade80; border-color: rgba(22,163,74,0.28); }
+    #section-tools .badge-red,
+    #section-comparador .badge-red   { background: rgba(220,38,38,0.14);  color: #f87171; border-color: rgba(220,38,38,0.28); }
+    #section-tools .badge-gray,
+    #section-comparador .badge-gray  { background: rgba(255,255,255,0.07);color: rgba(255,255,255,0.42); border-color: rgba(255,255,255,0.1); }
 
     /* ── INPUT CARDS (dark) ── */
     .calc-inputs {
@@ -2008,7 +2037,28 @@
       .replace(/^### (.+)$/gm, '<strong style="display:block;margin:10px 0 3px;color:#3d4454">$1</strong>')
       .replace(/^#### (.+)$/gm,'<strong style="display:block;margin:8px 0 2px;color:#6b7484">$1</strong>')
       .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
-      .replace(/^• (.+)$/gm,'&nbsp;&nbsp;• $1');
+      .replace(/^• (.+)$/gm,'&nbsp;&nbsp;• $1')
+      // Converte blocos NOTION_TABLE em <table class="notion-table">
+      .replace(/NOTION_TABLE\n([\s\S]*?)\nNOTION_TABLE_END/g, (_, inner) => {
+        const rows = inner.split('\n');
+        let html = '<table class="notion-table">';
+        let headClosed = false;
+        rows.forEach(row => {
+          const isH = row.startsWith('H:');
+          const isR = row.startsWith('R:');
+          if (!isH && !isR) return;
+          const cells = row.slice(2).split('\t');
+          if (isH) {
+            html += '<thead><tr>' + cells.map(c => `<th>${c}</th>`).join('') + '</tr></thead><tbody>';
+            headClosed = true;
+          } else {
+            if (!headClosed) { html += '<tbody>'; headClosed = true; }
+            html += '<tr>' + cells.map(c => `<td>${c}</td>`).join('') + '</tr>';
+          }
+        });
+        html += '</tbody></table>';
+        return html;
+      });
   }
 
   function escHtml(s) {
