@@ -68,17 +68,44 @@ function richText(rich) {
 
 /* ── Renderiza a lista plana com contadores sequenciais globais por nível ── */
 function renderBlocks(flat) {
-  // contadores[depth] = número atual naquele nível (números ou letras)
   const counters = {};
-  const lines = [];
+  const lines    = [];
+  let inTable        = false;
+  let tableRows      = [];
+  let tableHasHeader = false;
+
+  const flushTable = () => {
+    if (!tableRows.length) { inTable = false; return; }
+    const out = ['NOTION_TABLE'];
+    tableRows.forEach((cells, i) => {
+      const prefix = (tableHasHeader && i === 0) ? 'H' : 'R';
+      out.push(prefix + ':' + cells.map(cell => richText(cell) || '').join('\t'));
+    });
+    out.push('NOTION_TABLE_END');
+    lines.push(out.join('\n'));
+    tableRows = [];
+    inTable   = false;
+  };
 
   for (const { block, depth } of flat) {
-    const type  = block.type;
-    const text  = richText(block[type]?.rich_text);
-    const ind   = '  '.repeat(depth);
+    const type = block.type;
 
-    // Ao encontrar qualquer bloco que NÃO seja lista numerada,
-    // zera os contadores desse nível E de todos os níveis mais profundos.
+    // Acumula linhas de tabela
+    if (type === 'table_row') {
+      if (inTable) { tableRows.push(block.table_row?.cells || []); continue; }
+    } else if (inTable) {
+      flushTable();
+    }
+
+    if (type === 'table') {
+      inTable        = true;
+      tableHasHeader = block.table?.has_column_header || false;
+      continue;
+    }
+
+    const text = richText(block[type]?.rich_text);
+    const ind  = '  '.repeat(depth);
+
     if (type !== 'numbered_list_item') {
       Object.keys(counters).forEach((d) => {
         if (Number(d) >= depth) counters[d] = 0;
@@ -96,7 +123,6 @@ function renderBlocks(flat) {
         counters[0] = (counters[0] || 0) + 1;
         line = `${counters[0]}. ${text}`;
       } else {
-        // sub-itens viram parágrafo simples com indentação
         line = `${ind}${text}`;
       }
     }
@@ -125,10 +151,12 @@ function renderBlocks(flat) {
       const url = block.embed?.url || '';
       line = `[${url}](${url})`;
     }
-    else if (text)                    line = `${ind}${text}`;
+    else if (text) line = `${ind}${text}`;
 
     if (line) lines.push(line);
   }
+
+  if (inTable) flushTable();
 
   return lines.filter(Boolean).join('\n');
 }
