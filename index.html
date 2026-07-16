@@ -1206,24 +1206,26 @@
     }
     .comp-prod-row {
       display: flex;
-      align-items: center;
+      flex-direction: column;
       gap: 6px;
-      padding: 6px 7px;
+      padding: 7px 8px;
       border-radius: var(--radius);
       background: var(--gray-100);
       margin-bottom: 5px;
     }
     .comp-prod-row:last-child { margin-bottom: 0; }
+    .comp-prod-row-top {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
     .comp-prod-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
     .comp-prod-name {
-      font-size: 11.5px;
+      font-size: 12px;
       font-weight: 500;
       color: var(--black);
       flex: 1;
       min-width: 0;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
     }
     .comp-mini-slider {
       -webkit-appearance: none;
@@ -1231,20 +1233,20 @@
       height: 2px;
       border-radius: 2px;
       background: linear-gradient(to right, var(--accent) var(--fill,50%), var(--gray-300) var(--fill,50%));
-      width: 50px;
-      flex-shrink: 0;
+      width: 100%;
       outline: none;
       cursor: pointer;
+      display: block;
     }
     .comp-mini-slider::-webkit-slider-thumb {
       -webkit-appearance: none;
-      width: 10px; height: 10px;
+      width: 11px; height: 11px;
       border-radius: 50%;
       background: var(--accent);
       cursor: pointer;
     }
-    .comp-prod-rate { font-size: 11px; font-weight: 600; color: var(--accent); min-width: 38px; text-align: right; flex-shrink: 0; white-space: nowrap; }
-    .comp-prod-rate-auto { font-size: 10px; color: var(--gray-400); flex: 1; text-align: right; font-style: italic; }
+    .comp-prod-rate { font-size: 11px; font-weight: 600; color: var(--accent); flex-shrink: 0; white-space: nowrap; }
+    .comp-prod-rate-auto { font-size: 10px; color: var(--gray-400); font-style: italic; flex-shrink: 0; }
     .comp-tag-isento { font-size: 8px; font-weight: 700; color: #15803d; background: rgba(22,163,74,.12); border-radius: 3px; padding: 1px 5px; flex-shrink: 0; white-space: nowrap; }
     .comp-tag-ir     { font-size: 8px; font-weight: 700; color: var(--gray-500); background: var(--gray-200); border-radius: 3px; padding: 1px 5px; flex-shrink: 0; white-space: nowrap; }
     .comp-right { background: var(--white); border: 0.5px solid var(--gray-200); border-radius: 12px; overflow: hidden; }
@@ -2380,10 +2382,12 @@
 
       if (p.tipo === 'auto') {
         return `<div class="comp-prod-row">
-          <div class="comp-prod-dot" style="background:${p.cor}"></div>
-          <span class="comp-prod-name">${p.nome}</span>
-          <span class="comp-prod-rate-auto">automático</span>
-          ${tag}
+          <div class="comp-prod-row-top">
+            <div class="comp-prod-dot" style="background:${p.cor}"></div>
+            <span class="comp-prod-name">${p.nome}</span>
+            <span class="comp-prod-rate-auto">automático</span>
+            ${tag}
+          </div>
         </div>`;
       }
 
@@ -2395,12 +2399,14 @@
         : '';
 
       return `<div class="comp-prod-row">
-          <div class="comp-prod-dot" style="background:${p.cor}"></div>
-          <span class="comp-prod-name">${p.nome}</span>
+          <div class="comp-prod-row-top">
+            <div class="comp-prod-dot" style="background:${p.cor}"></div>
+            <span class="comp-prod-name">${p.nome}</span>
+            <span class="comp-prod-rate" id="disp-cp-${p.id}">${dispVal}</span>
+            ${tag}
+          </div>
           <input type="range" class="comp-mini-slider" id="cp-${p.id}" min="${p.min}" max="${p.max}" step="${p.step}" value="${p.val}"
             oninput="onCompProdSlide(this,'${p.id}',${dp},${isIPCA})">
-          <span class="comp-prod-rate" id="disp-cp-${p.id}">${dispVal}</span>
-          ${tag}
         </div>${hidden}`;
     }).join('');
 
