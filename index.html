@@ -1584,8 +1584,8 @@
       <div class="comp-global-input">
         <div class="comp-global-label">Valor investido</div>
         <div class="comp-global-val"><span class="cg-prefix">R$</span><span id="disp-comp-valor">100.000</span></div>
-        <input type="range" class="comp-global-slider" id="comp-valor" min="1000" max="3000000" step="1000" value="100000"
-          oninput="document.getElementById('disp-comp-valor').textContent=parseInt(this.value).toLocaleString('pt-BR');sliderFill(this);calcComparador()">
+        <input type="range" class="comp-global-slider" id="comp-valor" min="0" max="203" step="1" value="23"
+          oninput="onCompValorSlide(this)">
       </div>
       <div class="comp-global-input">
         <div class="comp-global-label">Prazo</div>
@@ -2380,8 +2380,21 @@
     calcComparador();
   }
 
+  /* Mapeamento não-linear do slider de valor (pos 0-203 → R$ 1k-1M) */
+  function compValorFromPos(pos) {
+    pos = parseInt(pos) || 0;
+    if (pos <= 4) return 1000 + pos * 1000;          // 1k → 5k (step 1k)
+    return 5000 + (pos - 4) * 5000;                  // 10k → 1M (step 5k)
+  }
+  function onCompValorSlide(el) {
+    const val = compValorFromPos(el.value);
+    document.getElementById('disp-comp-valor').textContent = val.toLocaleString('pt-BR');
+    sliderFill(el);
+    calcComparador();
+  }
+
   function calcComparador() {
-    const valor   = parseFloat(document.getElementById('comp-valor')?.value)   || 100000;
+    const valor   = compValorFromPos(document.getElementById('comp-valor')?.value) || 100000;
     const prazoM  = parseInt(document.getElementById('comp-prazo')?.value)      || 12;
     const selic_v = parseFloat(document.getElementById('c-selic')?.value)       || 14.75;
     const ipca_aa = parseFloat(document.getElementById('comp-ipca')?.value)     || 5.0;
