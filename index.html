@@ -885,10 +885,10 @@
       gap: 12px;
       margin-bottom: 24px;
     }
-    /* ── SUMMARY CARDS (dark) ── */
+    /* ── SUMMARY CARDS ── */
     .sum-card {
-      background: #0d1b3e;
-      border: 1px solid rgba(255,255,255,0.07);
+      background: var(--white);
+      border: 0.5px solid var(--gray-200);
       border-radius: 12px;
       padding: 20px 24px;
       text-align: center;
@@ -898,11 +898,11 @@
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 1.1px;
-      color: rgba(255,255,255,0.38);
+      color: var(--gray-400);
       margin-bottom: 8px;
     }
-    .sum-value { font-size: 26px; font-weight: 700; color: #fff; }
-    .sum-sub   { font-size: 11px; color: rgba(255,255,255,0.32); margin-top: 5px; }
+    .sum-value { font-size: 26px; font-weight: 700; color: var(--black); }
+    .sum-sub   { font-size: 11px; color: var(--gray-400); margin-top: 5px; }
     .sum-card.best { border-color: var(--accent); }
     .sum-card.best .sum-label { color: var(--accent); }
     .sum-card.best .sum-value { color: var(--accent); }
@@ -1416,7 +1416,7 @@
 
   <!-- ── CALCULADORA COMPROMISSADA ── -->
   <div id="tool-compromissada" class="calc-wrap" style="display:none">
-    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px;">
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px;">
       <p class="calc-title" style="margin:0">Calculadora Compromissada</p>
       <span class="selic-chip" id="selic-chip">
         <span class="dot"></span>
@@ -1425,126 +1425,71 @@
     </div>
     <p class="calc-sub">Simula rendimentos líquidos após IOF e IR. Valores em reais. Não considera mudança de juros no período.</p>
 
-    <!-- SELIC hidden para cálculo (valor gerenciado por fetchSELIC) -->
     <input type="hidden" id="c-selic" value="14.75">
+    <input type="hidden" id="c-cr-pct" value="10">
+    <input type="hidden" id="c-cdb-pct" value="100">
 
-    <!-- Inputs: 4 dark cards com slider -->
-    <div class="calc-inputs">
-
-      <!-- Financeiro aplicado -->
-      <div class="inp-card">
-        <div class="inp-card-label">Financeiro Aplicado</div>
-        <div class="inp-card-value">
-          <span class="v-prefix">R$</span>
-          <span class="v-num" id="display-valor">1.000.000</span>
-        </div>
-        <input type="range" id="c-valor" min="1000" max="3000000" step="5000" value="1000000"
+    <!-- Topbar de inputs -->
+    <div class="comp-topbar">
+      <div class="comp-global-input">
+        <div class="comp-global-label">Financeiro aplicado</div>
+        <div class="comp-global-val"><span class="cg-prefix">R$</span><span id="display-valor">1.000.000</span></div>
+        <input type="range" class="comp-global-slider" id="c-valor" min="1000" max="3000000" step="5000" value="1000000"
           oninput="document.getElementById('display-valor').textContent=parseInt(this.value).toLocaleString('pt-BR');sliderFill(this);calcular()">
       </div>
-
-      <!-- SELIC (read-only) -->
-      <div class="inp-card">
-        <div class="inp-card-label">SELIC Atual</div>
-        <div class="inp-card-value">
-          <span class="v-num" id="display-selic">—</span>
-          <span class="v-unit">% a.a.</span>
-        </div>
-        <input type="range" id="c-selic-range" min="0" max="25" step="0.25" value="14.75" disabled>
-      </div>
-
-      <!-- D.U./Ano (fixo) -->
-      <div class="inp-card">
-        <div class="inp-card-label">Dias Úteis / Ano</div>
-        <div class="inp-card-value">
-          <span class="v-num">252</span>
-          <span class="v-unit">d.u.</span>
-        </div>
-        <input type="range" min="252" max="252" value="252" style="--fill:100%" disabled>
-      </div>
-
-      <!-- Simulação até -->
-      <div class="inp-card">
-        <div class="inp-card-label">Simulação até</div>
-        <div class="inp-card-value">
-          <span class="v-num" id="display-maxdu">10</span>
-          <span class="v-unit">dias úteis</span>
-        </div>
-        <input type="range" id="c-max-du" min="1" max="30" step="1" value="10"
+      <div class="comp-global-input">
+        <div class="comp-global-label">Simulação até</div>
+        <div class="comp-global-val"><span id="display-maxdu">10</span> <span class="cg-unit">dias úteis</span></div>
+        <input type="range" class="comp-global-slider" id="c-max-du" min="1" max="30" step="1" value="10"
           oninput="document.getElementById('display-maxdu').textContent=this.value;sliderFill(this);calcular()">
       </div>
-
-    </div>
-
-    <!-- Produtos -->
-    <div class="calc-products">
-
-      <!-- Conta Remunerada: travada em 10% CDI -->
-      <div class="inp-card">
-        <div class="inp-card-label" style="--dot-clr:#6b7280">Conta Remunerada · Banco</div>
-        <div class="inp-card-value">
-          <span class="v-num">10</span>
-          <span class="v-unit">% do CDI</span>
-        </div>
-        <input type="hidden" id="c-cr-pct" value="10">
-        <input type="range" min="0" max="100" value="10" style="--fill:10%" disabled>
-        <div class="prod-badges">
-          <span class="prod-badge badge-dk-red">Incide IOF</span>
-          <span class="prod-badge badge-dk-gray">IR 22,5%</span>
-        </div>
+      <div class="comp-global-input comp-global-readonly">
+        <div class="comp-global-label">SELIC <span class="cg-auto-tag">auto</span></div>
+        <div class="comp-global-val"><span id="display-selic">—</span> <span class="cg-unit">% a.a.</span></div>
+        <input type="range" class="comp-global-slider" id="c-selic-range" min="0" max="25" step="0.25" value="14.75" disabled>
       </div>
-
-      <!-- CDB: travado em 100% CDI -->
-      <div class="inp-card">
-        <div class="inp-card-label" style="--dot-clr:#3b82f6">CDB · XP</div>
-        <div class="inp-card-value">
-          <span class="v-num">100</span>
-          <span class="v-unit">% do CDI</span>
-        </div>
-        <input type="hidden" id="c-cdb-pct" value="100">
-        <input type="range" min="0" max="100" value="100" style="--fill:100%" disabled>
-        <div class="prod-badges">
-          <span class="prod-badge badge-dk-red">Incide IOF</span>
-          <span class="prod-badge badge-dk-gray">IR 22,5%</span>
-        </div>
-      </div>
-
-      <!-- Compromissada: slider editável de 5 em 5% -->
-      <div class="inp-card">
-        <div class="inp-card-label">Compromissada · XP · Isenta IOF</div>
-        <div class="inp-card-value">
-          <span class="v-num" id="display-comp-pct">80</span>
-          <span class="v-unit">% do CDI</span>
-        </div>
-        <input type="range" id="c-comp-pct" min="50" max="150" step="5" value="80"
+      <div class="comp-global-input">
+        <div class="comp-global-label">Compromissada XP <span class="cg-auto-tag" style="color:#16a34a;background:rgba(22,163,74,.1)">iof free</span></div>
+        <div class="comp-global-val"><span id="display-comp-pct">80</span> <span class="cg-unit">% CDI</span></div>
+        <input type="range" class="comp-global-slider" id="c-comp-pct" min="50" max="150" step="5" value="80"
           oninput="document.getElementById('display-comp-pct').textContent=this.value;sliderFill(this);calcular()">
-        <div class="prod-badges">
-          <span class="prod-badge badge-dk-green">Isenta de IOF</span>
-          <span class="prod-badge badge-dk-gray">IR 22,5%</span>
-        </div>
       </div>
-
     </div>
 
     <!-- Resumo no prazo selecionado -->
     <div class="calc-summary" id="calc-summary">
-      <div class="sum-card"><div class="sum-label">Conta Remunerada</div><div class="sum-value" id="s-cr">—</div><div class="sum-sub" id="s-cr-sub"></div></div>
-      <div class="sum-card"><div class="sum-label">CDB</div><div class="sum-value" id="s-cdb">—</div><div class="sum-sub" id="s-cdb-sub"></div></div>
-      <div class="sum-card compromissada"><div class="sum-label">Compromissada</div><div class="sum-value" id="s-comp">—</div><div class="sum-sub" id="s-comp-sub"></div></div>
+      <div class="sum-card">
+        <div class="sum-label">Conta Remunerada · 10% CDI</div>
+        <div class="sum-value" id="s-cr">—</div>
+        <div class="sum-sub" id="s-cr-sub"></div>
+      </div>
+      <div class="sum-card">
+        <div class="sum-label">CDB · 100% CDI</div>
+        <div class="sum-value" id="s-cdb">—</div>
+        <div class="sum-sub" id="s-cdb-sub"></div>
+      </div>
+      <div class="sum-card">
+        <div class="sum-label">Compromissada · XP</div>
+        <div class="sum-value" id="s-comp">—</div>
+        <div class="sum-sub" id="s-comp-sub"></div>
+      </div>
     </div>
 
     <!-- Tabela de rendimento -->
-    <div style="background:#0d1b3e;border:1px solid rgba(255,255,255,0.07);border-radius:12px;overflow:hidden;">
-      <div class="calc-table-header" style="padding:18px 20px 14px;">
-        <div>
-          <p class="calc-table-title">Rendimento por Prazo</p>
-          <p class="calc-table-sub">Líquido após IOF e IR — valores em reais</p>
-        </div>
-        <div class="toggle-group">
-          <button class="toggle-btn active" id="toggle-brl" onclick="setCalcView('brl')">Líquido R$</button>
-          <button class="toggle-btn" id="toggle-cdi" onclick="setCalcView('cdi')">% CDI equiv.</button>
+    <div class="comp-right">
+      <div class="comp-right-header">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+          <div>
+            <p class="calc-table-title">Rendimento por Prazo</p>
+            <p class="calc-table-sub">Líquido após IOF e IR — valores em reais</p>
+          </div>
+          <div class="toggle-group">
+            <button class="toggle-btn active" id="toggle-brl" onclick="setCalcView('brl')">Líquido R$</button>
+            <button class="toggle-btn" id="toggle-cdi" onclick="setCalcView('cdi')">% CDI equiv.</button>
+          </div>
         </div>
       </div>
-      <div class="calc-table-wrap" style="border:none;border-radius:0;border-top:1px solid rgba(255,255,255,0.06);">
+      <div class="calc-table-wrap" style="border:none;border-radius:0;border-top:0.5px solid var(--gray-200);max-height:420px">
         <table class="calc-table">
           <thead>
             <tr>
@@ -1568,12 +1513,12 @@
 
   <!-- ── CLIENTES COMPROMISSADAS ── -->
   <div id="tool-clientes" class="calc-wrap">
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px">
       <div>
         <p class="calc-title" style="margin:0 0 4px">Clientes — Compromissadas</p>
-        <p style="font-size:12px;color:rgba(255,255,255,.4);margin:0" id="cli-status">—</p>
+        <p style="font-size:12px;color:var(--gray-400);margin:0" id="cli-status">—</p>
       </div>
-      <button onclick="fetchClientes()" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:rgba(255,255,255,0.6);font-size:12px;font-weight:600;cursor:pointer">
+      <button onclick="fetchClientes()" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:var(--gray-100);border:0.5px solid var(--gray-200);border-radius:8px;color:var(--gray-600);font-size:12px;font-weight:600;cursor:pointer">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.5"/>
         </svg>
@@ -1582,25 +1527,25 @@
     </div>
 
     <!-- Filtros -->
-    <div style="background:#0d1b3e;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:20px 24px;margin-bottom:16px;display:flex;gap:16px;flex-wrap:wrap;align-items:flex-end">
-      <div style="flex:1;min-width:220px">
-        <div class="inp-card-label" style="margin-bottom:6px;--dot-clr:var(--accent)">Assessor</div>
-        <select id="cli-assessor-select" class="pm-select" onchange="cliRenderTable()" style="width:100%">
+    <div class="comp-topbar" style="margin-bottom:16px;align-items:flex-end">
+      <div class="comp-global-input" style="flex:2;min-width:220px">
+        <div class="comp-global-label">● Assessor</div>
+        <select id="cli-assessor-select" class="pm-select" onchange="cliRenderTable()" style="width:100%;margin-top:6px;font-size:13px;padding:8px 10px;border-radius:6px">
           <option value="">Todos os assessores</option>
         </select>
       </div>
-      <div style="flex:1;min-width:200px">
-        <div class="inp-card-label" style="margin-bottom:6px;--dot-clr:#3b82f6">Buscar cliente</div>
+      <div class="comp-global-input" style="flex:2;min-width:200px">
+        <div class="comp-global-label">● Buscar cliente</div>
         <input id="cli-search" type="text" placeholder="Código do cliente..." oninput="cliRenderTable()"
-          style="width:100%;padding:9px 12px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:rgba(255,255,255,0.8);font-size:13px;outline:none">
+          style="width:100%;margin-top:6px;padding:8px 10px;background:var(--gray-100);border:0.5px solid var(--gray-200);border-radius:6px;color:var(--black);font-size:13px;outline:none">
       </div>
-      <div style="padding-bottom:2px">
-        <div style="font-size:11px;color:rgba(255,255,255,.35)" id="cli-count"></div>
+      <div class="comp-global-input" style="flex:0 0 auto;min-width:80px;justify-content:flex-end;display:flex;align-items:flex-end;padding-bottom:12px">
+        <span style="font-size:11px;color:var(--gray-400)" id="cli-count"></span>
       </div>
     </div>
 
     <!-- Tabela -->
-    <div id="cli-table-wrap" style="display:none;background:#0d1b3e;border:1px solid rgba(255,255,255,0.07);border-radius:12px;overflow:hidden">
+    <div id="cli-table-wrap" style="display:none" class="comp-right">
       <div class="calc-table-wrap" style="border:none;border-radius:0;max-height:520px">
         <table class="calc-table">
           <thead>
@@ -1617,8 +1562,8 @@
     </div>
 
     <!-- Loading / erro -->
-    <div id="cli-loading" style="text-align:center;padding:48px;color:rgba(255,255,255,.3);font-size:13px">
-      <svg class="pm-spin" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="2">
+    <div id="cli-loading" style="text-align:center;padding:48px;color:var(--gray-400);font-size:13px">
+      <svg class="pm-spin" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="opacity:.3">
         <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
       </svg>
       <p style="margin-top:12px">Carregando dados...</p>
@@ -2877,10 +2822,10 @@
     tbody.innerHTML = filtered.map(r => {
       const hasErro = r.erros.length > 0;
       return `<tr>
-        <td style="font-weight:600;color:#fff">${escHtml(r.codigo)}</td>
-        <td style="font-size:12px;color:rgba(255,255,255,.5)">${escHtml(r.assessor)}</td>
+        <td style="font-weight:600;color:var(--black)">${escHtml(r.codigo)}</td>
+        <td style="font-size:12px;color:var(--gray-500)">${escHtml(r.assessor)}</td>
         <td style="font-weight:700;color:var(--accent)">${r.taxa}% CDI</td>
-        <td style="${hasErro ? 'color:#f87171' : 'color:rgba(255,255,255,.3)'}; font-size:12px">${hasErro ? escHtml(r.erros) : '—'}</td>
+        <td style="${hasErro ? 'color:#dc2626' : 'color:var(--gray-300)'}; font-size:12px">${hasErro ? escHtml(r.erros) : '—'}</td>
       </tr>`;
     }).join('');
     const countEl = document.getElementById('cli-count');
