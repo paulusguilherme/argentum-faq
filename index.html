@@ -1226,6 +1226,9 @@
       color: var(--black);
       flex: 1;
       min-width: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .comp-mini-slider {
       -webkit-appearance: none;
@@ -2371,7 +2374,7 @@
       { id:'tripca',  nome:'Tesouro IPCA+',       cor:'#ea580c', isento:false, tipo:'ipca_plus',min:3,   max:12,  step:0.25, val:6.5  },
       { id:'trpre',   nome:'Tesouro Pré',         cor:'#dc2626', isento:false, tipo:'pct_aa',   min:8,   max:22,  step:0.25, val:14.0 },
       { id:'cricra',  nome:'CRI / CRA',           cor:'#b8a060', isento:true,  tipo:'pct_cdi',  min:50,  max:130, step:1,    val:95   },
-      { id:'deb',     nome:'Debêntures Incent.',   cor:'#9333ea', isento:true,  tipo:'pct_cdi',  min:80,  max:160, step:1,    val:110  },
+      { id:'deb',     nome:'Debêntures',            cor:'#9333ea', isento:true,  tipo:'pct_cdi',  min:80,  max:160, step:1,    val:110  },
       { id:'poupanca',nome:'Poupança',             cor:'#0891b2', isento:true,  tipo:'auto',     min:0,   max:0,   step:0,    val:null },
     ];
 
