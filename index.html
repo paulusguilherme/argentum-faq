@@ -1187,12 +1187,14 @@
     }
     .comp-global-slider:disabled::-webkit-slider-thumb { background: var(--gray-300); box-shadow: none; cursor: default; }
     /* split */
-    .comp-split { display: grid; grid-template-columns: 216px 1fr; gap: 12px; align-items: start; }
+    .comp-split { display: grid; grid-template-columns: 216px 1fr; gap: 12px; align-items: stretch; }
     .comp-left {
       background: var(--white);
       border: 0.5px solid var(--gray-200);
       border-radius: 12px;
       padding: 14px;
+      display: flex;
+      flex-direction: column;
     }
     .comp-left-title {
       font-size: 9.5px;
