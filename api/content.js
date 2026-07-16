@@ -151,6 +151,28 @@ function renderBlocks(flat) {
       const url = block.embed?.url || '';
       line = `[${url}](${url})`;
     }
+    else if (type === 'image') {
+      const url     = block.image?.file?.url || block.image?.external?.url || '';
+      const caption = richText(block.image?.caption) || 'Imagem';
+      if (url) line = `[🖼 ${caption}](${url})`;
+    }
+    else if (type === 'file') {
+      const url  = block.file?.file?.url || block.file?.external?.url || '';
+      const name = richText(block.file?.caption) || block.file?.name || 'Arquivo';
+      if (url) line = `[📎 ${name}](${url})`;
+    }
+    else if (type === 'pdf') {
+      const url     = block.pdf?.file?.url || block.pdf?.external?.url || '';
+      const caption = richText(block.pdf?.caption) || 'PDF';
+      if (url) line = `[📄 ${caption}](${url})`;
+    }
+    else if (type === 'child_page') {
+      const title = block.child_page?.title || '';
+      if (title) line = `**${title}**`;
+    }
+    else if (type === 'synced_block') {
+      /* conteúdo já vem via has_children=true → flattenBlocks trata */
+    }
     else if (text) line = `${ind}${text}`;
 
     if (line) lines.push(line);
